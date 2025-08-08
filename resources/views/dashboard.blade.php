@@ -2,229 +2,224 @@
 
 @section('title', 'Dashboard - ASTERA')
 
-<<<<<<< HEAD
 @section('content')
-    
-    
-    
-@endsection
-=======
-    /* Sidebar */
-    .sidebar {
-      width: 220px;
-      background-color: white;
-      border-right: 1px solid #eee;
-      height: 100vh;
-      padding: 20px 0;
-    }
-
-    .sidebar h2 {
-      color: #4BA3C3;
-      font-size: 20px;
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .menu {
-      list-style: none;
-      padding: 0;
-    }
-
-    .menu li {
-      padding: 15px 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #555;
-    }
-
-    .menu li.active {
-      background-color: #e6f5f8;
-      border-radius: 8px;
-      color: #4BA3C3;
-    }
-
-    /* Main content */
-    .main {
-      flex: 1;
-      padding: 20px 30px;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .header input {
-      padding: 8px 15px;
-      border: 1px solid #ddd;
-      border-radius: 20px;
-      width: 300px;
-    }
-
-    .overview {
-      margin-top: 20px;
-    }
-
-    .cards {
-      display: flex;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .card {
-      flex: 1;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    .card h3 {
-      margin-top: 10px;
-      font-size: 18px;
-    }
-
-    .card p {
-      color: gray;
-      margin-top: 5px;
-    }
-
-    .charts {
-      display: flex;
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .chart-box {
-      flex: 1;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-    }
-  </style>
-</head>
-<body>
-
-<div class="container">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h2>ASTERA</h2>
-    <ul class="menu">
-      <li class="active">📊 Dashboard</li>
-      <li>📁 Data Master</li>
-      <li>📜 Riwayat</li>
-    </ul>
-  </div>
-
-  <!-- Main content -->
-  <div class="main">
-    <div class="header">
-      <input type="text" placeholder="Cari untuk barang, kategori, dll.">
-      <div style="display: flex; align-items: center; gap: 15px;">
-        <span>👤 {{ Auth::user()->name }}</span>
-        <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
-          @csrf
-          <button type="submit" style="
-            background-color: #ff4757;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-          " onmouseover="this.style.backgroundColor='#ff3742'" onmouseout="this.style.backgroundColor='#ff4757'">
-            🚪 Logout
-          </button>
-        </form>
-      </div>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+    <!-- Card Statistik -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500">Total Barang</p>
+                <h3 class="text-2xl font-bold text-gray-800">{{ $totalBarang }}</h3>
+            </div>
+            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                <i class="fas fa-box-open text-xl"></i>
+            </div>
+        </div>
+        <div class="mt-4">
+            <span class="text-green-500 text-sm font-medium">
+                <i class="fas fa-arrow-up"></i> 12% dari bulan lalu
+            </span>
+        </div>
     </div>
 
-    <div class="overview">
-      <h2>Overview</h2>
-
-      <div class="cards">
-        <div class="card" style="background-color: #ffeaea;">
-          <h3>ATK</h3>
-          <p>25 Barang</p>
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500">Total Ruangan</p>
+                <h3 class="text-2xl font-bold text-gray-800">{{ $totalRuangan }}</h3>
+            </div>
+            <div class="p-3 rounded-full bg-green-100 text-green-600">
+                <i class="fas fa-door-open text-xl"></i>
+            </div>
         </div>
-        <div class="card" style="background-color: #eaf6ff;">
-          <h3>ELEKTRONIK</h3>
-          <p>25 Barang</p>
+        <div class="mt-4">
+            <span class="text-green-500 text-sm font-medium">
+                <i class="fas fa-arrow-up"></i> 5% dari bulan lalu
+            </span>
         </div>
-        <div class="card" style="background-color: #fffbe6;">
-          <h3>PENYEWA</h3>
-          <p>56 Total Penyewa</p>
-        </div>
-      </div>
-
-      <div class="charts">
-        <div class="chart-box">
-          <canvas id="barChart"></canvas>
-        </div>
-        <div class="chart-box">
-          <h4>PRODUK</h4>
-          <canvas id="lineChart1"></canvas>
-          <h4>Keluar-Masuk</h4>
-          <canvas id="lineChart2"></canvas>
-        </div>
-      </div>
     </div>
-  </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500">Barang Baik</p>
+                <h3 class="text-2xl font-bold text-gray-800">{{ $barangBaik }}</h3>
+            </div>
+            <div class="p-3 rounded-full bg-emerald-100 text-emerald-600">
+                <i class="fas fa-check-circle text-xl"></i>
+            </div>
+        </div>
+        <div class="mt-4">
+            <span class="text-green-500 text-sm font-medium">
+                {{ number_format(($barangBaik/$totalBarang)*100, 1) }}% dari total
+            </span>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-gray-500">Barang Rusak</p>
+                <h3 class="text-2xl font-bold text-gray-800">{{ $barangRusak }}</h3>
+            </div>
+            <div class="p-3 rounded-full bg-red-100 text-red-600">
+                <i class="fas fa-exclamation-triangle text-xl"></i>
+            </div>
+        </div>
+        <div class="mt-4">
+            <span class="text-red-500 text-sm font-medium">
+                {{ number_format(($barangRusak/$totalBarang)*100, 1) }}% dari total
+            </span>
+        </div>
+    </div>
 </div>
 
+<!-- Grafik Utama -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <div class="bg-white rounded-xl shadow-sm p-6 lg:col-span-2">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-800">Distribusi Barang per Ruangan</h3>
+            <select class="border rounded-lg px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option>Bulan Ini</option>
+                <option>3 Bulan Terakhir</option>
+                <option>Tahun Ini</option>
+            </select>
+        </div>
+        <div class="h-80">
+            <canvas id="barangPerRuanganChart"></canvas>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Status Barang</h3>
+        <div class="h-80">
+            <canvas id="statusBarangChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Tabel dan Grafik Tambahan -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="bg-white rounded-xl shadow-sm p-6 lg:col-span-2">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Aktivitas Terbaru</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="text-left border-b">
+                        <th class="pb-3">Barang</th>
+                        <th class="pb-3">Ruangan</th>
+                        <th class="pb-3">Status</th>
+                        <th class="pb-3">Terakhir Diupdate</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @foreach($recentActivities as $activity)
+                    <tr>
+                        <td class="py-3">{{ $activity->nama }}</td>
+                        <td class="py-3">{{ $activity->ruangan->nama }}</td>
+                        <td class="py-3">
+                            <span class="px-2 py-1 rounded-full text-xs 
+                                @if($activity->status == 'tersedia') bg-blue-100 text-blue-800
+                                @elseif($activity->status == 'dipinjam') bg-purple-100 text-purple-800
+                                @else bg-orange-100 text-orange-800 @endif">
+                                {{ ucfirst($activity->status) }}
+                            </span>
+                        </td>
+                        <td class="py-3">{{ $activity->updated_at->diffForHumans() }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Kondisi Barang</h3>
+        <div class="h-80">
+            <canvas id="kondisiBarangChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  // Bar Chart
-  new Chart(document.getElementById('barChart'), {
-    type: 'bar',
-    data: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sept', 'Okt', 'Nov', 'Des'],
-      datasets: [{
-        data: [10, 9, 8, 11, 7, 6, 8, 8, 8, 8, 8, 8],
-        backgroundColor: '#b3d9ff'
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true } }
-    }
-  });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Chart 1: Distribusi Barang per Ruangan
+        const ctx1 = document.getElementById('barangPerRuanganChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($ruanganLabels) !!},
+                datasets: [{
+                    label: 'Jumlah Barang',
+                    data: {!! json_encode($barangPerRuangan) !!},
+                    backgroundColor: '#4F46E5',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
 
-  // Line Chart 1
-  new Chart(document.getElementById('lineChart1'), {
-    type: 'line',
-    data: {
-      labels: [1, 2, 3, 4, 5, 6],
-      datasets: [{
-        data: [20, 18, 19, 22, 25, 23],
-        borderColor: 'green',
-        backgroundColor: 'rgba(0,255,0,0.2)',
-        fill: true
-      }]
-    },
-    options: { responsive: true, plugins: { legend: { display: false } } }
-  });
+        // Chart 2: Status Barang
+        const ctx2 = document.getElementById('statusBarangChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Tersedia', 'Dipinjam', 'Perbaikan'],
+                datasets: [{
+                    data: {!! json_encode($statusBarang) !!},
+                    backgroundColor: [
+                        '#3B82F6',
+                        '#8B5CF6',
+                        '#F59E0B'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
 
-  // Line Chart 2
-  new Chart(document.getElementById('lineChart2'), {
-    type: 'line',
-    data: {
-      labels: [1, 2, 3, 4, 5, 6],
-      datasets: [{
-        data: [10, 12, 9, 15, 35, 25],
-        borderColor: 'orange',
-        backgroundColor: 'rgba(255,165,0,0.3)',
-        fill: true
-      }]
-    },
-    options: { responsive: true, plugins: { legend: { display: false } } }
-  });
+        // Chart 3: Kondisi Barang
+        const ctx3 = document.getElementById('kondisiBarangChart').getContext('2d');
+        new Chart(ctx3, {
+            type: 'pie',
+            data: {
+                labels: ['Baik', 'Rusak Ringan', 'Rusak Berat'],
+                datasets: [{
+                    data: {!! json_encode($kondisiBarang) !!},
+                    backgroundColor: [
+                        '#10B981',
+                        '#F59E0B',
+                        '#EF4444'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    });
 </script>
-
-</body>
-</html>
->>>>>>> 175d06f161274cce199eb42d8ff3889ae160288f
+@endsection
