@@ -6,6 +6,8 @@
 
         <title>Laravel</title>
 
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
@@ -30,6 +32,8 @@
                     @endauth
                 </div>
             @endif
+
+            <h1 class="text-3xl font-bold text-green-600">Hello Tailwind!</h1>
 
             <div class="max-w-7xl mx-auto p-6 lg:p-8">
                 <div class="flex justify-center">

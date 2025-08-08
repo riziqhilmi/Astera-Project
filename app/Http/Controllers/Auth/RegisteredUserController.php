@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Mail;
 
 class RegisteredUserController extends Controller
 {
@@ -43,9 +44,19 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
-
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        // Generate OTP
+        $otp = random_int(1000, 9999);
+        session(['otp' => $otp, 'otp_email' => $user->email, 'otp_expired' => now()->addMinute()->timestamp]);
+
+        // Kirim email OTP
+        Mail::raw('Kode OTP Anda: ' . $otp, function ($message) use ($user) {
+            $message->to($user->email)
+                ->subject('Kode OTP Verifikasi');
+        });
+
+        // Redirect ke halaman OTP setelah register
+        return redirect()->route('otp');
     }
 }
