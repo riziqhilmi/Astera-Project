@@ -385,6 +385,21 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
+                    <!-- Password Confirmation Field -->
+<div class="input-group">
+    <input 
+        id="password_confirmation" 
+        type="password" 
+        name="password_confirmation"
+        class="form-input"
+        placeholder="Konfirmasi Password"
+        required 
+        autocomplete="new-password"
+    >
+    <span class="password-toggle" onclick="toggleConfirmPassword()">
+        <i class="fas fa-eye" id="confirm-eye-icon"></i>
+    </span>
+</div>
                     <!-- Register Button -->
                     <button type="submit" class="register-btn">
                         Daftar
@@ -426,6 +441,19 @@
                 eyeIcon.classList.add('fa-eye');
             }
         }
+        function toggleConfirmPassword() {
+    const confirmPasswordInput = document.getElementById('password_confirmation');
+    const confirmEyeIcon = document.getElementById('confirm-eye-icon');
+    if (confirmPasswordInput.type === 'password') {
+        confirmPasswordInput.type = 'text';
+        confirmEyeIcon.classList.remove('fa-eye');
+        confirmEyeIcon.classList.add('fa-eye-slash');
+    } else {
+        confirmPasswordInput.type = 'password';
+        confirmEyeIcon.classList.remove('fa-eye-slash');
+        confirmEyeIcon.classList.add('fa-eye');
+    }
+}
     </script>
 </body>
 </html>
