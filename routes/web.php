@@ -29,6 +29,13 @@ Route::get('/otp', function (Request $request) {
     return view('auth.otp', ['email' => $email]);
 })->name('otp');
 
+Route::get('/otp/back-to-register', function () {
+    // Logout user dan clear session OTP
+    auth()->logout();
+    session()->forget(['otp', 'otp_email', 'otp_expired']);
+    return redirect()->route('register');
+})->name('otp.back-to-register');
+
 Route::get('/otp-success', function () {
     return view('auth.otp-success');
 })->name('otp.success');
@@ -47,7 +54,11 @@ Route::post('/otp', function (Request $request) {
         return back()->withErrors(['otp' => 'Kode OTP sudah expired, silakan klik resend OTP!']);
     }
     if ($inputOtp == $sessionOtp) {
-        // OTP benar, bisa lanjutkan proses (misal redirect dashboard)
+        // OTP benar, tandai email sebagai terverifikasi agar bisa melewati middleware 'verified'
+        $user = auth()->user();
+        if ($user) {
+            $user->forceFill(['email_verified_at' => now()])->save();
+        }
         session()->forget(['otp', 'otp_email', 'otp_expired']);
         return redirect()->route('otp.success');
     } else {
@@ -62,11 +73,18 @@ Route::post('/otp/resend', function (Request $request) {
     }
     $otp = random_int(1000, 9999);
     session(['otp' => $otp, 'otp_email' => $user->email, 'otp_expired' => now()->addMinute()->timestamp]);
-    \Illuminate\Support\Facades\Mail::raw('Kode OTP Anda: ' . $otp, function ($message) use ($user) {
-        $message->to($user->email)
-            ->subject('Kode OTP Verifikasi');
-    });
-    return redirect()->route('otp')->with('status', 'Kode OTP baru telah dikirim ke email Anda.');
+    
+    try {
+        \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\OtpVerificationMail($user, $otp));
+        
+        // Log OTP untuk debugging
+        \Log::info('OTP resend to ' . $user->email . ': ' . $otp);
+        
+        return redirect()->route('otp')->with('status', 'Kode OTP baru telah dikirim ke email Anda.');
+    } catch (\Exception $e) {
+        \Log::error('Failed to resend OTP: ' . $e->getMessage());
+        return redirect()->route('otp')->with('error', 'Gagal mengirim OTP. Silakan coba lagi.');
+    } 
 });
 
 Route::middleware('auth')->group(function () {

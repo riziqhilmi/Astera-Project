@@ -130,7 +130,24 @@
   <div class="main">
     <div class="header">
       <input type="text" placeholder="Cari untuk barang, kategori, dll.">
-     <div>👤 {{ Auth::user()->name }}</div>
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <span>👤 {{ Auth::user()->name }}</span>
+        <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+          @csrf
+          <button type="submit" style="
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+          " onmouseover="this.style.backgroundColor='#ff3742'" onmouseout="this.style.backgroundColor='#ff4757'">
+            🚪 Logout
+          </button>
+        </form>
+      </div>
     </div>
 
     <div class="overview">

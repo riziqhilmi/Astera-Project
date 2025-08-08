@@ -50,13 +50,18 @@ class RegisteredUserController extends Controller
         $otp = random_int(1000, 9999);
         session(['otp' => $otp, 'otp_email' => $user->email, 'otp_expired' => now()->addMinute()->timestamp]);
 
-        // Kirim email OTP
-        Mail::raw('Kode OTP Anda: ' . $otp, function ($message) use ($user) {
-            $message->to($user->email)
-                ->subject('Kode OTP Verifikasi');
-        });
+        // Kirim email OTP dengan error handling
+        try {
+            Mail::to($user->email)->send(new \App\Mail\OtpVerificationMail($user, $otp));
+            
+            // Log OTP untuk debugging
+            \Log::info('OTP sent to ' . $user->email . ': ' . $otp);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send OTP: ' . $e->getMessage());
+            // Tetap lanjutkan meski email gagal - OTP akan ditampilkan di halaman
+        }
 
         // Redirect ke halaman OTP setelah register
-        return redirect()->route('otp');
+        return redirect()->route('otp')->with('info', 'Kode OTP telah dikirim ke email Anda. Silakan cek email dan masukkan kode OTP.');
     }
 }
