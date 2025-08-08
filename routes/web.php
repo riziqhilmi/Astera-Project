@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\RuanganController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,9 +22,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth'])->group (function () {
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');});
+    Route::get('/data_barang', [BarangController::class, 'index'])->name('data_barang.index');
+    Route::get('/data_ruangan', [RuanganController::class, 'index'])->name('data_ruangan.index');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -30,4 +35,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
 });
 
+Route::resource('data_barang', BarangController::class);
+Route::resource('data_ruangan', RuanganController::class);
 require __DIR__.'/auth.php';
