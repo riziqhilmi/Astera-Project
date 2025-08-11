@@ -10,6 +10,7 @@
             <div>
                 <p class="text-gray-500">Total Barang</p>
                 <h3 class="text-2xl font-bold text-gray-800">{{ $totalBarang }}</h3>
+                <p class="text-sm text-gray-500 mt-1">Jumlah: {{ $totalQuantity }}</p>
             </div>
             <div class="p-3 rounded-full bg-blue-100 text-blue-600">
                 <i class="fas fa-box-open text-xl"></i>
@@ -44,6 +45,7 @@
             <div>
                 <p class="text-gray-500">Barang Baik</p>
                 <h3 class="text-2xl font-bold text-gray-800">{{ $barangBaik }}</h3>
+                <p class="text-sm text-gray-500 mt-1">Jumlah: {{ $barangBaikQuantity }}</p>
             </div>
             <div class="p-3 rounded-full bg-emerald-100 text-emerald-600">
                 <i class="fas fa-check-circle text-xl"></i>
@@ -51,7 +53,7 @@
         </div>
         <div class="mt-4">
             <span class="text-green-500 text-sm font-medium">
-                {{ number_format(($barangBaik/$totalBarang)*100, 1) }}% dari total
+                {{ number_format(($persenBaik), 1) }}% dari total
             </span>
         </div>
     </div>
@@ -61,6 +63,7 @@
             <div>
                 <p class="text-gray-500">Barang Rusak</p>
                 <h3 class="text-2xl font-bold text-gray-800">{{ $barangRusak }}</h3>
+                <p class="text-sm text-gray-500 mt-1">Jumlah: {{ $barangRusakQuantity }}</p>
             </div>
             <div class="p-3 rounded-full bg-red-100 text-red-600">
                 <i class="fas fa-exclamation-triangle text-xl"></i>
@@ -68,9 +71,17 @@
         </div>
         <div class="mt-4">
             <span class="text-red-500 text-sm font-medium">
-                {{ number_format(($barangRusak/$totalBarang)*100, 1) }}% dari total
+                {{ number_format(($persenRusak), 1) }}% dari total
             </span>
         </div>
+
+        @if($totalBarang == 0)
+<div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6" role="alert">
+    <p class="font-bold">Tidak ada data barang</p>
+    <p>Silahkan tambahkan data barang terlebih dahulu untuk melihat statistik.</p>
+</div>
+@endif
+
     </div>
 </div>
 
@@ -88,12 +99,24 @@
         <div class="h-80">
             <canvas id="barangPerRuanganChart"></canvas>
         </div>
+        <div class="mt-4">
+            <h4 class="text-md font-semibold text-gray-700 mb-2">Jumlah Kuantitas per Ruangan</h4>
+            <div class="h-80">
+                <canvas id="quantityPerRuanganChart"></canvas>
+            </div>
+        </div>
     </div>
 
     <div class="bg-white rounded-xl shadow-sm p-6">
         <h3 class="text-lg font-semibold text-gray-800 mb-4">Status Barang</h3>
         <div class="h-80">
             <canvas id="statusBarangChart"></canvas>
+        </div>
+        <div class="mt-4">
+            <h4 class="text-md font-semibold text-gray-700 mb-2">Kuantitas per Status</h4>
+            <div class="h-80">
+                <canvas id="statusQuantityChart"></canvas>
+            </div>
         </div>
     </div>
 </div>
@@ -108,6 +131,7 @@
                     <tr class="text-left border-b">
                         <th class="pb-3">Barang</th>
                         <th class="pb-3">Ruangan</th>
+                        <th class="pb-3">Jumlah</th>
                         <th class="pb-3">Status</th>
                         <th class="pb-3">Terakhir Diupdate</th>
                     </tr>
@@ -117,6 +141,7 @@
                     <tr>
                         <td class="py-3">{{ $activity->nama }}</td>
                         <td class="py-3">{{ $activity->ruangan->nama }}</td>
+                        <td class="py-3">{{ $activity->total }}</td>
                         <td class="py-3">
                             <span class="px-2 py-1 rounded-full text-xs 
                                 @if($activity->status == 'tersedia') bg-blue-100 text-blue-800
@@ -138,6 +163,12 @@
         <div class="h-80">
             <canvas id="kondisiBarangChart"></canvas>
         </div>
+        <div class="mt-4">
+            <h4 class="text-md font-semibold text-gray-700 mb-2">Kuantitas per Kondisi</h4>
+            <div class="h-80">
+                <canvas id="kondisiQuantityChart"></canvas>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -145,7 +176,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Chart 1: Distribusi Barang per Ruangan
+        // Chart 1: Distribusi Barang per Ruangan (count)
         const ctx1 = document.getElementById('barangPerRuanganChart').getContext('2d');
         new Chart(ctx1, {
             type: 'bar',
@@ -170,9 +201,34 @@
             }
         });
 
-        // Chart 2: Status Barang
-        const ctx2 = document.getElementById('statusBarangChart').getContext('2d');
+        // Chart 2: Quantity per Ruangan
+        const ctx2 = document.getElementById('quantityPerRuanganChart').getContext('2d');
         new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($ruanganLabels) !!},
+                datasets: [{
+                    label: 'Total Kuantitas',
+                    data: {!! json_encode($barangQuantityPerRuangan) !!},
+                    backgroundColor: '#10B981',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Chart 3: Status Barang (count)
+        const ctx3 = document.getElementById('statusBarangChart').getContext('2d');
+        new Chart(ctx3, {
             type: 'doughnut',
             data: {
                 labels: ['Tersedia', 'Dipinjam', 'Perbaikan'],
@@ -196,14 +252,65 @@
             }
         });
 
-        // Chart 3: Kondisi Barang
-        const ctx3 = document.getElementById('kondisiBarangChart').getContext('2d');
-        new Chart(ctx3, {
+        // Chart 4: Status Barang (quantity)
+        const ctx4 = document.getElementById('statusQuantityChart').getContext('2d');
+        new Chart(ctx4, {
+            type: 'doughnut',
+            data: {
+                labels: ['Tersedia', 'Dipinjam', 'Perbaikan'],
+                datasets: [{
+                    data: {!! json_encode($statusBarangQuantity) !!},
+                    backgroundColor: [
+                        '#3B82F6',
+                        '#8B5CF6',
+                        '#F59E0B'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // Chart 5: Kondisi Barang (count)
+        const ctx5 = document.getElementById('kondisiBarangChart').getContext('2d');
+        new Chart(ctx5, {
             type: 'pie',
             data: {
                 labels: ['Baik', 'Rusak Ringan', 'Rusak Berat'],
                 datasets: [{
                     data: {!! json_encode($kondisiBarang) !!},
+                    backgroundColor: [
+                        '#10B981',
+                        '#F59E0B',
+                        '#EF4444'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // Chart 6: Kondisi Barang (quantity)
+        const ctx6 = document.getElementById('kondisiQuantityChart').getContext('2d');
+        new Chart(ctx6, {
+            type: 'pie',
+            data: {
+                labels: ['Baik', 'Rusak Ringan', 'Rusak Berat'],
+                datasets: [{
+                    data: {!! json_encode($kondisiBarangQuantity) !!},
                     backgroundColor: [
                         '#10B981',
                         '#F59E0B',

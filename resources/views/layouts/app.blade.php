@@ -75,39 +75,57 @@
         <div id="sidebarOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-20"></div>
         
         <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full z-30 bg-white transition-transform duration-300 ease-in-out translate-x-0 w-[200px] rounded-r-2xl flex flex-col items-center pt-8">
-            <button id="closeSidebar" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 focus:outline-none md:hidden" style="font-size: 1.7rem;">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="sidebar-logo">ASTERA</div>
-            <div class="sidebar-user">{{ Auth::user()->name ?? 'User' }}</div>
-            <nav class="sidebar-menu w-full px-2">
-                <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                    <i class="fas fa-th-large"></i> Dashboard
-                </a>
-                
-                <!-- Data Menu with Dropdown -->
-                <div class="mb-2">
-                    <button id="dataMenuButton" class="sidebar-link w-full text-left {{ request()->routeIs('data_barang.*', 'data_ruangan.*') ? 'active' : '' }}">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <i class="fas fa-database"></i>
-                                <span>Data</span>
-                            </div>
-                            <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="dataMenuIcon"></i>
+        <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full z-30 bg-white transition-transform duration-300 ease-in-out translate-x-0 w-[200px] rounded-r-2xl flex flex-col justify-between pt-8">
+    
+    <!-- Bagian Atas -->
+    <div class="flex flex-col items-center w-full px-2">
+        <button id="closeSidebar" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 focus:outline-none md:hidden" style="font-size: 1.7rem;">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="sidebar-logo">ASTERA</div>
+        <div class="sidebar-user">{{ Auth::user()->name ?? 'User' }}</div>
+
+        <nav class="sidebar-menu w-full mt-6">
+            <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                <i class="fas fa-th-large"></i> Dashboard
+            </a>
+            
+            <!-- Data Menu with Dropdown -->
+            <div class="mb-2">
+                <button id="dataMenuButton" class="sidebar-link w-full text-left {{ request()->routeIs('data_barang.*', 'data_ruangan.*') ? 'active' : '' }}">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-database"></i>
+                            <span>Data</span>
                         </div>
-                    </button>
-                    
-                    <div id="dataSubMenu" class="{{ request()->routeIs('data_barang.*', 'data_ruangan.*') ? 'show' : '' }}">
-                        <a href="{{ route('data_barang.index') }}" class="sidebar-link text-sm {{ request()->routeIs('data_barang.*') ? 'active' : '' }}">
-                            <i class="fas fa-box-open"></i> Data Barang
-                        </a>
-                        <a href="{{ route('data_ruangan.index') }}" class="sidebar-link text-sm {{ request()->routeIs('data_ruangan.*') ? 'active' : '' }}">
-                            <i class="fas fa-door-open"></i> Data Ruangan
-                        </a>
+                        <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="dataMenuIcon"></i>
                     </div>
+                </button>
+                
+                <div id="dataSubMenu" class="{{ request()->routeIs('data_barang.*', 'data_ruangan.*') ? 'show' : '' }}">
+                    <a href="{{ route('data_barang.index') }}" class="sidebar-link text-sm {{ request()->routeIs('data_barang.*') ? 'active' : '' }}">
+                        <i class="fas fa-box-open"></i> Data Barang
+                    </a>
+                    <a href="{{ route('data_ruangan.index') }}" class="sidebar-link text-sm {{ request()->routeIs('data_ruangan.*') ? 'active' : '' }}">
+                        <i class="fas fa-door-open"></i> Data Ruangan
+                    </a>
                 </div>
-            </nav>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Bagian Bawah (Logout) -->
+    <div class="w-full px-2 mb-6">
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="sidebar-link text-red-600 hover:text-red-800">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </form>
+    </div>
+
+</aside>
+
         </aside>
 
         <div id="main-content" class="flex-1 transition-all duration-300 ease-in-out ml-[200px] pt-8 px-8">

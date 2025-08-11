@@ -1,55 +1,103 @@
 <?php
 
-// app/Http/Controllers/DashboardController.php
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use App\Models\Ruangan;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $totalBarang = Barang::count();
-        $totalRuangan = Ruangan::count();
-        
-        $barangBaik = Barang::where('kondisi', 'baik')->count();
-        $barangRusak = Barang::whereIn('kondisi', ['rusak_ringan', 'rusak_berat'])->count();
-        
-        // Data untuk chart distribusi barang per ruangan
-        $ruanganLabels = Ruangan::pluck('nama');
-        $barangPerRuangan = Ruangan::withCount('barangs')->pluck('barangs_count');
-        
-        // Data untuk chart status barang
-        $statusBarang = [
-            Barang::where('status', 'tersedia')->count(),
-            Barang::where('status', 'dipinjam')->count(),
-            Barang::where('status', 'perbaikan')->count()
-        ];
-        
-        // Data untuk chart kondisi barang
-        $kondisiBarang = [
-            Barang::where('kondisi', 'baik')->count(),
-            Barang::where('kondisi', 'rusak_ringan')->count(),
-            Barang::where('kondisi', 'rusak_berat')->count()
-        ];
-        
-        // Aktivitas terbaru
-        $recentActivities = Barang::with('ruangan')
-            ->latest()
-            ->take(5)
-            ->get();
+        // Gunakan cache untuk mengurangi query ke database
+        $cacheKey = 'dashboard_stats_' . auth()->id();
+        $data = Cache::remember($cacheKey, now()->addMinutes(15), function () {
+            // Data dasar
+            $totalBarang = Barang::count();
+            $totalQuantity = Barang::sum('total') ?? 0;
+            $totalRuangan = Ruangan::count();
+            
+            // Data kondisi barang
+            $barangBaik = Barang::where('kondisi', 'baik')->count();
+            $barangBaikQuantity = Barang::where('kondisi', 'baik')->sum('total') ?? 0;
+            $barangRusak = Barang::whereIn('kondisi', ['rusak_ringan', 'rusak_berat'])->count();
+            $barangRusakQuantity = Barang::whereIn('kondisi', ['rusak_ringan', 'rusak_berat'])->sum('total') ?? 0;
+            
+            // Hitung persentase dengan pengecekan division by zero
+            $persenBaik = $totalBarang > 0 ? ($barangBaik / $totalBarang) * 100 : 0;
+            $persenRusak = $totalBarang > 0 ? ($barangRusak / $totalBarang) * 100 : 0;
+            $persenBaikQuantity = $totalQuantity > 0 ? ($barangBaikQuantity / $totalQuantity) * 100 : 0;
+            $persenRusakQuantity = $totalQuantity > 0 ? ($barangRusakQuantity / $totalQuantity) * 100 : 0;
+            
+            // Data untuk chart distribusi ruangan
+            $ruanganLabels = Ruangan::pluck('nama') ?? [];
+            $barangPerRuangan = Ruangan::withCount('barangs')->pluck('barangs_count') ?? [];
+            $barangQuantityPerRuangan = Ruangan::withSum('barangs', 'total')->pluck('barangs_sum_total') ?? [];
+            
+            // Data default jika tidak ada data
+            $defaultChartData = [0, 0, 0];
+            $defaultChartLabels = ['Tersedia', 'Dipinjam', 'Perbaikan'];
+            $defaultKondisiLabels = ['Baik', 'Rusak Ringan', 'Rusak Berat'];
+            
+            // Data status barang
+            $statusBarang = $totalBarang > 0 ? [
+                Barang::where('status', 'tersedia')->count(),
+                Barang::where('status', 'dipinjam')->count(),
+                Barang::where('status', 'perbaikan')->count()
+            ] : $defaultChartData;
+            
+            $statusBarangQuantity = $totalQuantity > 0 ? [
+                Barang::where('status', 'tersedia')->sum('total') ?? 0,
+                Barang::where('status', 'dipinjam')->sum('total') ?? 0,
+                Barang::where('status', 'perbaikan')->sum('total') ?? 0
+            ] : $defaultChartData;
+            
+            // Data kondisi barang
+            $kondisiBarang = $totalBarang > 0 ? [
+                Barang::where('kondisi', 'baik')->count(),
+                Barang::where('kondisi', 'rusak_ringan')->count(),
+                Barang::where('kondisi', 'rusak_berat')->count()
+            ] : $defaultChartData;
+            
+            $kondisiBarangQuantity = $totalQuantity > 0 ? [
+                Barang::where('kondisi', 'baik')->sum('total') ?? 0,
+                Barang::where('kondisi', 'rusak_ringan')->sum('total') ?? 0,
+                Barang::where('kondisi', 'rusak_berat')->sum('total') ?? 0
+            ] : $defaultChartData;
+            
+            // Aktivitas terbaru
+            $recentActivities = Barang::with('ruangan')
+                ->latest()
+                ->take(5)
+                ->get();
 
-        return view('dashboard', compact(
-            'totalBarang',
-            'totalRuangan',
-            'barangBaik',
-            'barangRusak',
-            'ruanganLabels',
-            'barangPerRuangan',
-            'statusBarang',
-            'kondisiBarang',
-            'recentActivities'
-        ));
+            return [
+                'totalBarang' => $totalBarang,
+                'totalQuantity' => $totalQuantity,
+                'totalRuangan' => $totalRuangan,
+                'barangBaik' => $barangBaik,
+                'barangBaikQuantity' => $barangBaikQuantity,
+                'barangRusak' => $barangRusak,
+                'barangRusakQuantity' => $barangRusakQuantity,
+                'persenBaik' => $persenBaik,
+                'persenRusak' => $persenRusak,
+                'persenBaikQuantity' => $persenBaikQuantity,
+                'persenRusakQuantity' => $persenRusakQuantity,
+                'ruanganLabels' => $ruanganLabels,
+                'barangPerRuangan' => $barangPerRuangan,
+                'barangQuantityPerRuangan' => $barangQuantityPerRuangan,
+                'statusBarang' => $statusBarang,
+                'statusBarangQuantity' => $statusBarangQuantity,
+                'kondisiBarang' => $kondisiBarang,
+                'kondisiBarangQuantity' => $kondisiBarangQuantity,
+                'recentActivities' => $recentActivities,
+                'defaultChartLabels' => $defaultChartLabels,
+                'defaultKondisiLabels' => $defaultKondisiLabels,
+                'hasData' => $totalBarang > 0
+            ];
+        });
+
+        return view('dashboard', $data);
     }
 }
