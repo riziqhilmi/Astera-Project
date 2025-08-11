@@ -10,8 +10,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Gunakan cache untuk mengurangi query ke database
-        $cacheKey = 'dashboard_stats_' . auth()->id();
+        $cacheKey = 'dashboard_stats_' . auth()->id() . '_' . Barang::max('updated_at');
+        
         $data = Cache::remember($cacheKey, now()->addMinutes(15), function () {
             // Data dasar
             $totalBarang = Barang::count();
