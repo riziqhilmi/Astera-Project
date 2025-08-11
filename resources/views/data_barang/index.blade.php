@@ -18,6 +18,7 @@
                     <th class="py-3 px-4 text-left">No</th>
                     <th class="py-3 px-4 text-left">Foto</th>
                     <th class="py-3 px-4 text-left">Nama Barang</th>
+                    <th class="py-3 px-4 text-left">Total</th>
                     <th class="py-3 px-4 text-left">Ruangan</th>
                     <th class="py-3 px-4 text-left">Kategori</th>
                     <th class="py-3 px-4 text-left">Kondisi</th>
@@ -39,6 +40,7 @@
                         @endif
                     </td>
                     <td class="py-3 px-4">{{ $item->nama }}</td>
+                    <td class="py-3 px-4">{{ $item->total }}</td>
                     <td class="py-3 px-4">{{ $item->ruangan->nama }}</td>
                     <td class="py-3 px-4">{{ $item->kategori }}</td>
                     <td class="py-3 px-4">

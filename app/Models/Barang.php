@@ -14,12 +14,17 @@ class Barang extends Model
         'id_ruangan',
         'foto',
         'nama',
+        'total',
         'kategori',
         'kondisi',
         'tanggal_pembelian',
         'status'
     ];
 
+    protected $casts = [
+        'tanggal_pembelian' => 'date',
+    ];
+    
     public function ruangan()
     {
         return $this->belongsTo(Ruangan::class, 'id_ruangan');

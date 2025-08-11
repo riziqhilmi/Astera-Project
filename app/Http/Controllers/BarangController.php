@@ -28,9 +28,10 @@ class BarangController extends Controller
             'id_ruangan' => 'required|exists:ruangans,id',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'nama' => 'required',
+            'total' => 'required|integer|min:0',
             'kategori' => 'required',
-            'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
             'tanggal_pembelian' => 'required|date',
+            'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
             'status' => 'required|in:tersedia,dipinjam,perbaikan'
         ]);
 
@@ -56,6 +57,7 @@ class BarangController extends Controller
             'id_ruangan' => 'required|exists:ruangans,id',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'nama' => 'required',
+            'total' => 'required|integer|min:0',
             'kategori' => 'required',
             'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
             'tanggal_pembelian' => 'required|date',
