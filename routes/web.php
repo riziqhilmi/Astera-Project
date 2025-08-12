@@ -5,25 +5,17 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\RuanganController;
+use App\Http\Controllers\BarangKeluarController;
+use App\Http\Controllers\BarangMasukController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Route yang memerlukan autentikasi dan verifikasi OTP
 Route::middleware(['auth', 'otp.verified'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -34,15 +26,26 @@ Route::middleware(['auth', 'otp.verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
     
-    // Route resource yang memerlukan autentikasi dan verifikasi OTP
     Route::resource('data_barang', BarangController::class);
     Route::resource('data_ruangan', RuanganController::class);
 });
 
-// Route OTP yang memerlukan autentikasi
+// Operasional Routes
+Route::prefix('operasional')->group(function () {
+    // Barang Masuk
+    Route::get('/barang-masuk', [BarangMasukController::class, 'index'])->name('barang_masuk.index');
+    Route::post('/barang-masuk', [BarangMasukController::class, 'store'])->name('barang_masuk.store');
+    Route::delete('/barang-masuk/{id}', [BarangMasukController::class, 'destroy'])->name('barang_masuk.destroy');
+    
+    // Barang Keluar
+    Route::get('/barang-keluar', [BarangKeluarController::class, 'index'])->name('barang_keluar.index');
+    Route::post('/barang-keluar', [BarangKeluarController::class, 'store'])->name('barang_keluar.store');
+    Route::delete('/barang-keluar/{id}', [BarangKeluarController::class, 'destroy'])->name('barang_keluar.destroy');
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/otp', function (Request $request) {
-        // Cek apakah user sudah terverifikasi
+        
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->route('dashboard');
         }
@@ -52,14 +55,14 @@ Route::middleware(['auth'])->group(function () {
     })->name('otp');
 
     Route::get('/otp/back-to-register', function () {
-        // Logout user dan clear session OTP
+        
         auth()->logout();
         session()->forget(['otp', 'otp_email', 'otp_expired']);
         return redirect()->route('register');
     })->name('otp.back-to-register');
 
     Route::post('/otp', function (Request $request) {
-        // Cek apakah user sudah terverifikasi
+    
         if ($request->user()->hasVerifiedEmail()) {
             return redirect()->route('dashboard');
         }
