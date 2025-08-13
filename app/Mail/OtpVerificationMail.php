@@ -33,7 +33,10 @@ class OtpVerificationMail extends Mailable
     {
         return new Envelope(
             subject: 'Kode OTP Verifikasi - Astera',
-            from: config('mail.from.address'),
+            from: new \Illuminate\Mail\Mailables\Address(
+                config('mail.from.address'),
+                config('mail.from.name')
+            ),
         );
     }
 
