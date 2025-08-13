@@ -92,8 +92,6 @@
     <div id="app-layout" class="flex min-h-screen relative">
         <!-- Sidebar Overlay -->
         <div id="sidebarOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-20"></div>
-        
-        <!-- Sidebar -->
 <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full z-30 bg-white transition-transform duration-300 ease-in-out translate-x-0 w-[200px] rounded-r-2xl flex flex-col justify-between pt-8">
     <!-- Bagian Atas -->
     <div class="flex flex-col items-center w-full px-2">
@@ -101,58 +99,74 @@
             <i class="fas fa-times"></i>
         </button>
         <div class="sidebar-logo">ASTERA</div>
-        <div class="sidebar-user">{{ Auth::user()->name ?? 'User' }}</div>
+        <div class="sidebar-user">
+            {{ Auth::user()->name ?? 'User' }}
+            @if(Auth::check() && isset(Auth::user()->role))
+                ({{ Auth::user()->role }})
+            @endif
+        </div>
 
         <nav class="sidebar-menu w-full mt-6">
-            <!-- Dashboard -->
-            <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <i class="fas fa-th-large"></i> Dashboard
+    <!-- Dashboard -->
+    <a href="{{ route('dashboard') }}" class="sidebar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+        <i class="fas fa-th-large"></i> Dashboard
+    </a>
+    
+    @if(auth()->user()->isAdmin() || auth()->user()->isUserInput())
+    <!-- Data Master -->
+    <div class="mb-2">
+        <button id="dataMenuButton" class="sidebar-link w-full text-left {{ request()->routeIs('data_barang.*', 'data_ruangan.*') ? 'active' : '' }}">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-database"></i>
+                    <span>Data Master</span>
+                </div>
+                <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="dataMenuIcon"></i>
+            </div>
+        </button>
+        
+        <div id="dataSubMenu" class="{{ request()->routeIs('data_barang.*', 'data_ruangan.*') ? 'show' : '' }}">
+            <a href="{{ route('data_barang.index') }}" class="sidebar-link text-sm {{ request()->routeIs('data_barang.*') ? 'active' : '' }}">
+                <i class="fas fa-box-open"></i> Data Barang
             </a>
-            
-            <!-- Data Master -->
-            <div class="mb-2">
-                <button id="dataMenuButton" class="sidebar-link w-full text-left {{ request()->routeIs('data_barang.*', 'data_ruangan.*') ? 'active' : '' }}">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-database"></i>
-                            <span>Data Master</span>
-                        </div>
-                        <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="dataMenuIcon"></i>
-                    </div>
-                </button>
-                
-                <div id="dataSubMenu" class="{{ request()->routeIs('data_barang.*', 'data_ruangan.*') ? 'show' : '' }}">
-                    <a href="{{ route('data_barang.index') }}" class="sidebar-link text-sm {{ request()->routeIs('data_barang.*') ? 'active' : '' }}">
-                        <i class="fas fa-box-open"></i> Data Barang
-                    </a>
-                    <a href="{{ route('data_ruangan.index') }}" class="sidebar-link text-sm {{ request()->routeIs('data_ruangan.*') ? 'active' : '' }}">
-                        <i class="fas fa-door-open"></i> Data Ruangan
-                    </a>
+            <a href="{{ route('data_ruangan.index') }}" class="sidebar-link text-sm {{ request()->routeIs('data_ruangan.*') ? 'active' : '' }}">
+                <i class="fas fa-door-open"></i> Data Ruangan
+            </a>
+        </div>
+    </div>
+    @endif
+    
+    @if(auth()->user()->isAdmin() || auth()->user()->isUserOperasional())
+    <!-- Operasional -->
+    <div class="mb-2">
+        <button id="operasionalMenuButton" class="sidebar-link w-full text-left {{ request()->routeIs('barang_masuk.*', 'barang_keluar.*') ? 'active' : '' }}">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Operasional</span>
                 </div>
+                <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="operasionalMenuIcon"></i>
             </div>
-            
-            <!-- Operasional -->
-            <div class="mb-2">
-                <button id="operasionalMenuButton" class="sidebar-link w-full text-left {{ request()->routeIs('barang_masuk.*', 'barang_keluar.*') ? 'active' : '' }}">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-exchange-alt"></i>
-                            <span>Operasional</span>
-                        </div>
-                        <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="operasionalMenuIcon"></i>
-                    </div>
-                </button>
-                
-                <div id="operasionalSubMenu" class="{{ request()->routeIs('barang_masuk.*', 'barang_keluar.*') ? 'show' : '' }}">
-                    <a href="{{ route('barang_masuk.index') }}" class="sidebar-link text-sm {{ request()->routeIs('barang_masuk.*') ? 'active' : '' }}">
-                        <i class="fas fa-arrow-down"></i> Barang Masuk
-                    </a>
-                    <a href="{{ route('barang_keluar.index') }}" class="sidebar-link text-sm {{ request()->routeIs('barang_keluar.*') ? 'active' : '' }}">
-                        <i class="fas fa-arrow-up"></i> Barang Keluar
-                    </a>
-                </div>
-            </div>
-        </nav>
+        </button>
+        
+        <div id="operasionalSubMenu" class="{{ request()->routeIs('barang_masuk.*', 'barang_keluar.*') ? 'show' : '' }}">
+            <a href="{{ route('barang_masuk.index') }}" class="sidebar-link text-sm {{ request()->routeIs('barang_masuk.*') ? 'active' : '' }}">
+                <i class="fas fa-arrow-down"></i> Barang Masuk
+            </a>
+            <a href="{{ route('barang_keluar.index') }}" class="sidebar-link text-sm {{ request()->routeIs('barang_keluar.*') ? 'active' : '' }}">
+                <i class="fas fa-arrow-up"></i> Barang Keluar
+            </a>
+        </div>
+    </div>
+    @endif
+    
+    @if(auth()->user()->isAdmin())
+    <!-- User Management (hanya untuk admin) -->
+    <a href="{{ route('users.index') }}" class="sidebar-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
+        <i class="fas fa-users"></i> User Management
+    </a>
+    @endif
+</nav>
     </div>
 
     <!-- Bagian Bawah (Profile, Notifications, Settings, Logout) -->

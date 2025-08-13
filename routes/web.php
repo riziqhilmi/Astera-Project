@@ -7,6 +7,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\BarangMasukController;
+use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -17,33 +18,37 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth', 'otp.verified'])->group(function () {
-    // Dashboard
+// Register khusus untuk admin
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store']);
+});
+
+// Dashboard berdasarkan role
+Route::middleware(['auth', 'verified', 'otp.verified'])->group(function () {
+    // Dashboard untuk semua role
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/data_barang', [BarangController::class, 'index'])->name('data_barang.index');
-    Route::get('/data_ruangan', [RuanganController::class, 'index'])->name('data_ruangan.index');
+    
+    // Route untuk admin
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
+        Route::resource('users', UserController::class);
+    });
+    
+    // Route untuk admin dan user input
+    Route::middleware(['admin_or_user_input'])->group(function () {
+        Route::resource('data_barang', BarangController::class);
+        Route::resource('data_ruangan', RuanganController::class);
+    });
+    
+    // Profile untuk semua role
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
-    
-    // Test route untuk profile
-    Route::get('/profile-test', function () {
-        return view('profile.test');
-    })->name('profile.test');
-    
-    // Demo route untuk profile settings
-    Route::get('/profile-settings-demo', function () {
-        return view('demo');
-    })->name('profile.settings.demo');
-    
-    Route::resource('data_barang', BarangController::class);
-    Route::resource('data_ruangan', RuanganController::class);
-    
 });
 
-// Operasional Routes
-Route::prefix('operasional')->group(function () {
+// Operasional Routes untuk admin dan user operasional
+Route::prefix('operasional')->middleware(['auth', 'verified', 'otp.verified', 'admin_or_user_operasional'])->group(function () {
     // Barang Masuk
     Route::get('/barang-masuk', [BarangMasukController::class, 'index'])->name('barang_masuk.index');
     Route::post('/barang-masuk', [BarangMasukController::class, 'store'])->name('barang_masuk.store');

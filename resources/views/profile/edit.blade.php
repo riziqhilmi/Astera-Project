@@ -4,20 +4,20 @@
 <div class="py-12">
     <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
         <!-- Profile Banner Section -->
-        <div class="profile-banner relative rounded-2xl h-44 mb-12 overflow-hidden" @if(Auth::user()->banner_image)
+        <div class="profile-banner relative rounded-2xl h-44 mb-12 overflow-hidden select-none" @if(Auth::user()->banner_image)
              style="background-image: url('{{ asset('storage/' . Auth::user()->banner_image) }}'); background-size: cover; background-position: center;"
              @else
              style="background: linear-gradient(90deg, #d6f2f2 0%, #eaf6ff 45%, #ffe5cf 100%);"
              @endif>
             <!-- Camera Icon for Banner -->
-            <button id="bannerCameraBtn" type="button" class="absolute bottom-4 right-4 p-2 bg-white/80 border border-white rounded-lg hover:bg-white transition-all">
+            <button id="bannerCameraBtn" type="button" class="absolute bottom-4 right-4 p-2 bg-white/80 border border-white rounded-lg hover:bg-white transition-all z-30 cursor-pointer focus:outline-none">
                 <i class="fas fa-camera text-gray-600"></i>
             </button>
             <!-- Hidden file input for banner -->
             <input type="file" id="bannerInput" name="banner_image" accept="image/*" class="hidden" form="profileUpdateForm">
             
             <!-- Avatar + text inside banner -->
-            <div class="absolute inset-x-6 bottom-4 flex items-center gap-4">
+            <div class="absolute inset-x-6 bottom-4 flex items-center gap-4 pr-16 z-10">
                 <div class="relative">
                     <img id="profileAvatar" src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : 'https://randomuser.me/api/portraits/men/32.jpg' }}" alt="Profile" class="w-24 h-24 rounded-full object-cover ring-4 ring-white shadow-lg">
                     <button id="profileCameraBtn" type="button" class="absolute bottom-1 right-1 p-2 bg-teal-500 text-white rounded-full hover:bg-teal-600 shadow">
@@ -123,6 +123,11 @@
                 <p class="text-gray-600">Update your password to keep your account secure.</p>
             </div>
 
+            <!-- Hidden standalone form to send OTP without nesting -->
+            <form id="sendOtpForm" method="POST" action="{{ route('password.send-otp') }}" class="hidden">
+                @csrf
+            </form>
+
             <form id="passwordUpdateForm" method="post" action="{{ route('password.update') }}" class="space-y-6">
                 @csrf
                 @method('put')
@@ -157,6 +162,26 @@
                            placeholder="Confirm new password">
                 </div>
 
+                <!-- OTP Code -->
+                <div>
+                    <label for="otp_code" class="block text-sm font-medium text-gray-700 mb-2">OTP Code</label>
+                    <div class="flex gap-3">
+                        <input type="text" id="otp_code" name="otp_code" maxlength="4"
+                               class="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                               placeholder="1234">
+                        <button id="sendOtpButton" type="submit" form="sendOtpForm" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Kirim OTP</button>
+                    </div>
+                    @if (session('status') && session('open_tab') === 'password')
+                        <p class="mt-2 text-sm text-green-600">{{ session('status') }}</p>
+                    @endif
+                    @if (session('error') && session('open_tab') === 'password')
+                        <p class="mt-2 text-sm text-red-600">{{ session('error') }}</p>
+                    @endif
+                    @error('otp_code', 'updatePassword')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Save Button -->
                 <div class="flex justify-end pt-6">
                     <button type="submit" class="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-all hover:-translate-y-0.5 shadow-lg">
@@ -181,6 +206,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Tab functionality
     document.addEventListener('DOMContentLoaded', function() {
@@ -225,6 +251,11 @@
         profileTab.addEventListener('click', () => switchTab('profile'));
         passwordTab.addEventListener('click', () => switchTab('password'));
 
+        // If server indicates to open specific tab
+        @if (session('open_tab') === 'password')
+            switchTab('password');
+        @endif
+
         // Profile picture edit functionality
         const editProfileBtn = document.getElementById('editProfileBtn');
         const deleteProfileBtn = document.getElementById('deleteProfileBtn');
@@ -266,24 +297,74 @@
 
         if (saveBtn) {
             saveBtn.addEventListener('click', function() {
-                // Determine active tab and submit corresponding form
                 const isProfileActive = !profileContent.classList.contains('hidden');
-                if (isProfileActive) {
-                    const form = document.getElementById('profileUpdateForm');
-                    if (form) form.submit();
-                } else {
-                    const pwdForm = document.getElementById('passwordUpdateForm');
-                    if (pwdForm) pwdForm.submit();
-                }
+                const title = isProfileActive ? 'Simpan perubahan profil?' : 'Simpan perubahan password?';
+                const text = isProfileActive ? 'Perubahan data profil akan disimpan.' : 'Password akan diperbarui.';
+                Swal.fire({
+                    title: title,
+                    text: text,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, simpan',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        if (isProfileActive) {
+                            const form = document.getElementById('profileUpdateForm');
+                            if (form) form.submit();
+                        } else {
+                            const pwdForm = document.getElementById('passwordUpdateForm');
+                            if (pwdForm) pwdForm.submit();
+                        }
+                    }
+                });
             });
         }
 
+        // Capture original state for cancel
+        const bannerEl = document.querySelector('.profile-banner');
+        const originalBannerBg = bannerEl ? bannerEl.style.backgroundImage : '';
+        const nameInput = document.getElementById('name');
+        const phoneInput = document.getElementById('phone');
+        const contactEmailInput = document.getElementById('contact_email');
+        const deleteFlagEl = document.getElementById('deleteProfileFlag');
+        const originalName = nameInput ? nameInput.value : '';
+        const originalPhone = phoneInput ? phoneInput.value : '';
+        const originalContactEmail = contactEmailInput ? contactEmailInput.value : '';
+        const originalProfileSrc = profileImage ? profileImage.src : '';
+
         if (cancelBtn) {
             cancelBtn.addEventListener('click', function() {
-                // Reset form to original values
-                if (confirm('Are you sure you want to cancel? All changes will be lost.')) {
-                    location.reload();
-                }
+                Swal.fire({
+                    title: 'Batalkan perubahan?',
+                    text: 'Semua perubahan yang belum disimpan akan hilang.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, batalkan',
+                    cancelButtonText: 'Kembali'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Revert inputs
+                        if (nameInput) nameInput.value = originalName;
+                        if (phoneInput) phoneInput.value = originalPhone;
+                        if (contactEmailInput) contactEmailInput.value = originalContactEmail;
+                        // Revert profile image and flags
+                        if (deleteFlagEl) deleteFlagEl.value = '0';
+                        if (profileImage) profileImage.src = originalProfileSrc;
+                        const profileFile = document.getElementById('profileInput');
+                        if (profileFile) profileFile.value = '';
+                        // Revert banner preview
+                        if (bannerEl) bannerEl.style.backgroundImage = originalBannerBg;
+                        if (bannerInput) bannerInput.value = '';
+                        // Feedback
+                        Swal.fire({
+                            title: 'Perubahan dibatalkan',
+                            icon: 'success',
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                    }
+                });
             });
         }
 
@@ -340,7 +421,7 @@
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        const banner = document.querySelector('.rounded-2xl.h-44');
+                        const banner = document.querySelector('.profile-banner') || document.querySelector('.rounded-2xl.h-44');
                         if (banner) {
                             banner.style.backgroundImage = `url(${e.target.result})`;
                             banner.style.backgroundSize = 'cover';
