@@ -4,45 +4,35 @@
 <div class="py-12">
     <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
         <!-- Profile Banner Section -->
-        <div class="relative bg-gradient-to-r from-blue-200 via-green-200 via-yellow-200 to-orange-200 rounded-2xl p-8 mb-8 overflow-hidden">
+        <div class="profile-banner relative rounded-2xl h-44 mb-12 overflow-hidden" @if(Auth::user()->banner_image)
+             style="background-image: url('{{ asset('storage/' . Auth::user()->banner_image) }}'); background-size: cover; background-position: center;"
+             @else
+             style="background: linear-gradient(90deg, #d6f2f2 0%, #eaf6ff 45%, #ffe5cf 100%);"
+             @endif>
             <!-- Camera Icon for Banner -->
-            <button id="bannerCameraBtn" class="absolute top-4 right-4 p-2 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 transition-all hover:scale-110">
+            <button id="bannerCameraBtn" type="button" class="absolute bottom-4 right-4 p-2 bg-white/80 border border-white rounded-lg hover:bg-white transition-all">
                 <i class="fas fa-camera text-gray-600"></i>
             </button>
-            
             <!-- Hidden file input for banner -->
-            <input type="file" id="bannerInput" accept="image/*" class="hidden">
+            <input type="file" id="bannerInput" name="banner_image" accept="image/*" class="hidden" form="profileUpdateForm">
             
-            <div class="flex items-center gap-6">
-                <!-- Large Profile Picture -->
+            <!-- Avatar + text inside banner -->
+            <div class="absolute inset-x-6 bottom-4 flex items-center gap-4">
                 <div class="relative">
-                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover">
-                    <button id="profileCameraBtn" class="absolute bottom-0 right-0 p-2 bg-teal-500 text-white rounded-full hover:bg-teal-600 transition-colors hover:scale-110">
-                        <i class="fas fa-camera text-sm"></i>
+                    <img id="profileAvatar" src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : 'https://randomuser.me/api/portraits/men/32.jpg' }}" alt="Profile" class="w-24 h-24 rounded-full object-cover ring-4 ring-white shadow-lg">
+                    <button id="profileCameraBtn" type="button" class="absolute bottom-1 right-1 p-2 bg-teal-500 text-white rounded-full hover:bg-teal-600 shadow">
+                        <i class="fas fa-camera text-xs"></i>
                     </button>
                 </div>
-                
-                <!-- Profile Info -->
-                <div class="flex-1">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Setting</h1>
-                    <p class="text-gray-600">{{ Auth::user()->email ?? 'Hendrickmoseng@gmail.com' }}</p>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="flex gap-3">
-                    <button id="cancelBtn" class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all hover:-translate-y-0.5">
-                        Cancel
-                    </button>
-                    <button id="saveBtn" class="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-all hover:-translate-y-0.5 shadow-lg">
-                        Save
-                    </button>
+                <div>
+                    <h1 class="text-2xl font-semibold text-gray-800">Setting</h1>
+                    <p class="text-sm text-gray-700">{{ Auth::user()->email ?? 'Hendrickmoseng@gmail.com' }}</p>
                 </div>
             </div>
         </div>
-
-        <!-- Tabs -->
-        <div class="border-b border-gray-200 mb-8">
-            <nav class="flex space-x-8">
+        <!-- Profile header under banner -->
+        <div class="flex items-center justify-between -mt-10 mb-6 pr-2 border-b border-gray-200 pb-2">
+            <nav class="flex items-center gap-8">
                 <button id="profileTab" class="py-2 px-1 border-b-2 border-teal-500 text-teal-500 font-medium transition-all cursor-pointer" data-tab="profile">
                     Profile
                 </button>
@@ -50,6 +40,10 @@
                     Password
                 </button>
             </nav>
+            <div class="flex gap-2 mr-2">
+                <button id="cancelBtn" type="button" class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition">Cancel</button>
+                <button id="saveBtn" type="button" class="px-4 py-1.5 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition">Save</button>
+            </div>
         </div>
 
         <!-- Profile Form -->
@@ -59,9 +53,10 @@
                 <p class="text-gray-600">Update your photo and personal details.</p>
             </div>
 
-            <form method="post" action="{{ route('profile.update') }}" class="space-y-6">
+            <form id="profileUpdateForm" method="post" action="{{ route('profile.update') }}" class="space-y-6" enctype="multipart/form-data">
                 @csrf
                 @method('patch')
+                <input type="hidden" name="email" value="{{ old('email', $user->email) }}">
 
                 <!-- Username -->
                 <div>
@@ -77,19 +72,12 @@
                 <!-- Profile Picture -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
-                    <div class="flex items-center gap-4">
-                        <img id="profileImage" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="w-16 h-16 rounded-full border-2 border-gray-200 object-cover">
-                        <div class="flex gap-3">
-                            <button id="editProfileBtn" type="button" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-all hover:scale-105">
-                                Edit
-                            </button>
-                            <button id="deleteProfileBtn" type="button" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all hover:scale-105">
-                                Delete
-                            </button>
-                        </div>
+                    <div class="flex items-center gap-3">
+                        <button id="editProfileBtn" type="button" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-all">Upload New</button>
+                        <button id="deleteProfileBtn" type="button" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all">Remove</button>
                     </div>
-                    <!-- Hidden file input for profile picture -->
-                    <input type="file" id="profileInput" accept="image/*" class="hidden">
+                    <input type="file" id="profileInput" name="profile_picture" accept="image/*" class="hidden">
+                    <input type="hidden" id="deleteProfileFlag" name="delete_profile_picture" value="0">
                 </div>
 
                 <!-- Phone Number -->
@@ -100,7 +88,7 @@
                             <img src="https://flagcdn.com/w20/id.png" alt="ID" class="w-5 h-3 mr-2">
                             <span>+62</span>
                         </div>
-                        <input type="tel" id="phone" name="phone" value="851-894-2348"
+                        <input type="tel" id="phone" name="phone" value="{{ old('phone', Auth::user()->phone) }}"
                                class="flex-1 px-3 py-2 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                                placeholder="Enter phone number">
                     </div>
@@ -113,7 +101,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-envelope text-gray-400"></i>
                         </div>
-                        <input type="email" id="contact_email" name="contact_email" value="{{ Auth::user()->email ?? 'example@example.com' }}"
+                        <input type="email" id="contact_email" name="contact_email" value="{{ old('contact_email', Auth::user()->contact_email ?? Auth::user()->email) }}"
                                class="w-full pl-10 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                                placeholder="Enter contact email">
                     </div>
@@ -135,7 +123,7 @@
                 <p class="text-gray-600">Update your password to keep your account secure.</p>
             </div>
 
-            <form method="post" action="{{ route('password.update') }}" class="space-y-6">
+            <form id="passwordUpdateForm" method="post" action="{{ route('password.update') }}" class="space-y-6">
                 @csrf
                 @method('put')
 
@@ -240,7 +228,7 @@
         // Profile picture edit functionality
         const editProfileBtn = document.getElementById('editProfileBtn');
         const deleteProfileBtn = document.getElementById('deleteProfileBtn');
-        const profileImage = document.getElementById('profileImage');
+        const profileImage = document.getElementById('profileImage') || document.getElementById('profileAvatar');
         const profileInput = document.getElementById('profileInput');
 
         if (editProfileBtn) {
@@ -252,6 +240,8 @@
         if (deleteProfileBtn) {
             deleteProfileBtn.addEventListener('click', function() {
                 if (confirm('Are you sure you want to delete your profile picture?')) {
+                    const deleteFlag = document.getElementById('deleteProfileFlag');
+                    if (deleteFlag) deleteFlag.value = '1';
                     profileImage.src = 'https://randomuser.me/api/portraits/men/32.jpg';
                 }
             });
@@ -276,8 +266,15 @@
 
         if (saveBtn) {
             saveBtn.addEventListener('click', function() {
-                // Show success message
-                showNotification('Profile updated successfully!', 'success');
+                // Determine active tab and submit corresponding form
+                const isProfileActive = !profileContent.classList.contains('hidden');
+                if (isProfileActive) {
+                    const form = document.getElementById('profileUpdateForm');
+                    if (form) form.submit();
+                } else {
+                    const pwdForm = document.getElementById('passwordUpdateForm');
+                    if (pwdForm) pwdForm.submit();
+                }
             });
         }
 
@@ -343,11 +340,12 @@
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        // Update banner background
-                        const banner = document.querySelector('.bg-gradient-to-r');
-                        banner.style.backgroundImage = `url(${e.target.result})`;
-                        banner.style.backgroundSize = 'cover';
-                        banner.style.backgroundPosition = 'center';
+                        const banner = document.querySelector('.rounded-2xl.h-44');
+                        if (banner) {
+                            banner.style.backgroundImage = `url(${e.target.result})`;
+                            banner.style.backgroundSize = 'cover';
+                            banner.style.backgroundPosition = 'center';
+                        }
                     };
                     reader.readAsDataURL(file);
                 }

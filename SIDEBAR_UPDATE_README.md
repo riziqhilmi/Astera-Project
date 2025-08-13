@@ -159,3 +159,4 @@ Sidebar sekarang memiliki:
 - ✅ **User experience yang lebih baik** untuk proses logout
 
 Tombol logout sekarang terpisah dari profile summary, memiliki styling yang konsisten, dan menggunakan icon logout yang umum digunakan di aplikasi modern.
+

@@ -164,7 +164,7 @@
         
         <!-- Profile Summary -->
         <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-            <img src="https://randomuser.me/api/portraits/men/32.jpg" 
+            <img src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : 'https://randomuser.me/api/portraits/men/32.jpg' }}" 
                 alt="Profile" 
                 class="w-10 h-10 rounded-full object-cover border-2 border-gray-200">
             <div class="flex-1 min-w-0">
