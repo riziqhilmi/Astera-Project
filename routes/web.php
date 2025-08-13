@@ -9,6 +9,7 @@ use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\BarangMasukController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 
 
@@ -28,6 +29,7 @@ Route::middleware(['auth', 'otp.verified'])->group(function () {
     
     Route::resource('data_barang', BarangController::class);
     Route::resource('data_ruangan', RuanganController::class);
+    
 });
 
 // Operasional Routes

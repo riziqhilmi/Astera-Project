@@ -1,6 +1,5 @@
 <?php
 
-// app/Http/Controllers/RuanganController.php
 namespace App\Http\Controllers;
 
 use App\Models\Ruangan;
@@ -8,9 +7,17 @@ use Illuminate\Http\Request;
 
 class RuanganController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $ruangan = Ruangan::all();
+        $query = Ruangan::query();
+
+        if ($request->filled('search')) {
+            $query->where('nama', 'like', '%' . $request->search . '%')
+                  ->orWhere('keterangan', 'like', '%' . $request->search . '%');
+        }
+
+        $ruangan = $query->paginate(10); // pagination biar rapi
+
         return view('data_ruangan.index', compact('ruangan'));
     }
 

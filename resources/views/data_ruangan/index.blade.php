@@ -11,6 +11,21 @@
         </a>
     </div>
 
+      <form method="GET" action="{{ route('data_ruangan.index') }}" class="mb-4">
+    <div class="flex gap-2">
+        <input 
+            type="text" 
+            name="search" 
+            value="{{ request('search') }}" 
+            placeholder="Cari Ruangan" 
+            class="border rounded px-3 py-2 w-full"
+        >
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+            Cari
+        </button>
+    </div>
+</form>
+
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white">
             <thead>
