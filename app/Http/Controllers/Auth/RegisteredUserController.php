@@ -41,16 +41,15 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'user_input'
         ]);
 
         event(new Registered($user));
         Auth::login($user);
 
-        // Generate OTP
         $otp = random_int(1000, 9999);
         session(['otp' => $otp, 'otp_email' => $user->email, 'otp_expired' => now()->addMinute()->timestamp]);
 
-        // Kirim email OTP dengan error handling
         try {
             Mail::to($user->email)->send(new \App\Mail\OtpVerificationMail($user, $otp));
             

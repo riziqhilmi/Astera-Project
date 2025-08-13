@@ -12,34 +12,36 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role', // tambahkan ini
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // Tambahkan method untuk check role
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isUserInput()
+    {
+        return $this->role === 'user_input';
+    }
+
+    public function isUserOperasional()
+    {
+        return $this->role === 'user_operasional';
+    }
 }
