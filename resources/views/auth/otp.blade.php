@@ -5,29 +5,27 @@
             <p class="text-gray-500 text-center mb-1">Tolong enter digit verifikasi kode yang kita kirim ke</p>
             <p class="text-gray-700 font-semibold text-center mb-8">{{ $email }}</p>
 
-
-
             <!-- OTP Form -->
             <form method="POST" action="{{ url('/otp') }}" class="w-full flex flex-col items-center">
                 @csrf
                 <div class="flex items-center justify-between w-72 mb-8">
-                    <input name="otp1" type="text" inputmode="numeric" maxlength="1" class="otp-input w-16 h-16 rounded-full bg-gray-200 text-center text-xl outline-none focus:ring-2 focus:ring-cyan-400"/>
-                    <input name="otp2" type="text" inputmode="numeric" maxlength="1" class="otp-input w-16 h-16 rounded-full bg-gray-200 text-center text-xl outline-none focus:ring-2 focus:ring-cyan-400"/>
-                    <input name="otp3" type="text" inputmode="numeric" maxlength="1" class="otp-input w-16 h-16 rounded-full bg-gray-200 text-center text-xl outline-none focus:ring-2 focus:ring-cyan-400"/>
-                    <input name="otp4" type="text" inputmode="numeric" maxlength="1" class="otp-input w-16 h-16 rounded-full bg-gray-200 text-center text-xl outline-none focus:ring-2 focus:ring-cyan-400"/>
+                    <input name="otp1" type="text" inputmode="numeric" maxlength="1" class="otp-input w-16 h-16 rounded-full bg-gray-200 text-center text-xl outline-none focus:ring-2 focus:ring-cyan-400" required/>
+                    <input name="otp2" type="text" inputmode="numeric" maxlength="1" class="otp-input w-16 h-16 rounded-full bg-gray-200 text-center text-xl outline-none focus:ring-2 focus:ring-cyan-400" required/>
+                    <input name="otp3" type="text" inputmode="numeric" maxlength="1" class="otp-input w-16 h-16 rounded-full bg-gray-200 text-center text-xl outline-none focus:ring-2 focus:ring-cyan-400" required/>
+                    <input name="otp4" type="text" inputmode="numeric" maxlength="1" class="otp-input w-16 h-16 rounded-full bg-gray-200 text-center text-xl outline-none focus:ring-2 focus:ring-cyan-400" required/>
                 </div>
 
                 @error('otp')
-                    <div class="text-red-600 text-sm mb-4">{{ $message }}</div>
+                    <div class="text-red-600 text-sm mb-4 text-center bg-red-50 p-3 rounded-lg border border-red-200">{{ $message }}</div>
                 @enderror
                 @if (session('status'))
-                    <div class="text-green-600 text-sm mb-4">{{ session('status') }}</div>
+                    <div class="text-green-600 text-sm mb-4 text-center bg-green-50 p-3 rounded-lg border border-green-200">{{ session('status') }}</div>
                 @endif
                 @if (session('error'))
-                    <div class="text-red-600 text-sm mb-4">{{ session('error') }}</div>
+                    <div class="text-red-600 text-sm mb-4 text-center bg-red-50 p-3 rounded-lg border border-red-200">{{ session('error') }}</div>
                 @endif
                 @if (session('info'))
-                    <div class="text-blue-600 text-sm mb-4 text-center">{{ session('info') }}</div>
+                    <div class="text-blue-600 text-sm mb-4 text-center bg-blue-50 p-3 rounded-lg border border-blue-200">{{ session('info') }}</div>
                 @endif
 
                 <button type="submit" style="background-color: #58C1D1;" class="w-full py-4 rounded-full text-white text-lg font-bold mb-6 transition hover:opacity-90 shadow-none">Confirm</button>
