@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('users', UserController::class);
     });
     
-    Route::middleware(['admin_or_user_input'])->group(function () {
+    Route::middleware(['admin_or_user'])->group(function () {
         Route::resource('data_barang', BarangController::class);
         Route::resource('data_ruangan', RuanganController::class);
     });

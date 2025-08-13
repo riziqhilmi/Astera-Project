@@ -57,7 +57,7 @@
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required>
                     <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="user_input" {{ old('role', $user->role) == 'user_input' ? 'selected' : '' }}>User Input</option>
+                    <option value="user" {{ old('role', $user->role) == 'user' ? 'selected' : '' }}>User</option>
                     <option value="user_operasional" {{ old('role', $user->role) == 'user_operasional' ? 'selected' : '' }}>User Operasional</option>
                 </select>
                 @error('role')

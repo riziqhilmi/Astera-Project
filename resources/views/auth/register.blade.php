@@ -431,7 +431,7 @@
     <div class="input-group">
         <i class="fas fa-user-tag input-icon"></i>
         <select id="role" name="role" class="form-input input-with-icon" required>
-            <option value="user_input">User Input</option>
+            <option value="user">User</option>
             <option value="user_operasional">User Operasional</option>
         </select>
     </div>

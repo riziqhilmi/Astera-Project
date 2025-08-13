@@ -6,11 +6,11 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminOrUserInputMiddleware
+class AdminOrUserMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isUserInput())) {
+        if (!auth()->check() || (!auth()->user()->isAdmin() && !auth()->user()->isUser())) {
             abort(403, 'Unauthorized action.');
         }
 

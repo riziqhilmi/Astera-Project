@@ -39,9 +39,9 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
-    public function isUserInput()
+    public function isUser()
     {
-        return $this->role === 'user_input';
+        return $this->role === 'user';
     }
 
     public function isUserOperasional()

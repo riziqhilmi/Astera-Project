@@ -59,7 +59,7 @@
                     required>
                     <option value="">Select Role</option>
                     <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="user_input" {{ old('role') == 'user_input' ? 'selected' : '' }}>User Input</option>
+                    <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>User</option>
                     <option value="user_operasional" {{ old('role') == 'user_operasional' ? 'selected' : '' }}>User Operasional</option>
                 </select>
                 @error('role')
