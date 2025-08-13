@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\RuanganController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -28,6 +29,7 @@ Route::middleware(['auth'])->group (function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');});
     Route::get('/data_barang', [BarangController::class, 'index'])->name('data_barang.index');
     Route::get('/data_ruangan', [RuanganController::class, 'index'])->name('data_ruangan.index');
+    Route::get('/data_users', [UsersController::class, 'index'])->name('data_users.index');
 
 Route::get('/otp', function (Request $request) {
     $email = session('otp_email', 'example@gmail.com');
@@ -101,4 +103,5 @@ Route::middleware('auth')->group(function () {
 
 Route::resource('data_barang', BarangController::class);
 Route::resource('data_ruangan', RuanganController::class);
+Route::resource('data_users', UsersController::class);
 require __DIR__.'/auth.php';

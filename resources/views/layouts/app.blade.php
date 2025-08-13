@@ -105,6 +105,9 @@
                         <a href="{{ route('data_ruangan.index') }}" class="sidebar-link text-sm {{ request()->routeIs('data_ruangan.*') ? 'active' : '' }}">
                             <i class="fas fa-door-open"></i> Data Ruangan
                         </a>
+                        <a href="{{ route('data_users.index') }}" class="sidebar-link text-sm {{ request()->routeIs('data_users.*') ? 'active' : '' }}">
+                            <i class="fas fa-box-open"></i> Data Users
+                        </a>
                     </div>
                 </div>
             </nav>
