@@ -29,16 +29,19 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                             {{ $user->role === 'admin' ? 'bg-purple-100 text-purple-800' : 
-                               ($user->role === 'user_input' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800') }}">
+                               ($user->role === 'user' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800') }}">
                             {{ ucfirst(str_replace('_', ' ', $user->role)) }}
                         </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <a href="{{ route('users.edit', $user->id) }}" class="text-blue-600 hover:text-blue-900 mr-3">Edit</a>
-                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline">
+                        
+                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="inline delete-user-form">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure?')">Delete</button>
+                            <button type="button" class="text-red-600 hover:text-red-900 btn-delete" data-username="{{ $user->name }}">
+                                Delete
+                            </button>
                         </form>
                     </td>
                 </tr>
@@ -48,3 +51,33 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<!-- Tambahkan SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".btn-delete").forEach(function (button) {
+        button.addEventListener("click", function () {
+            let form = this.closest("form");
+            let username = this.dataset.username;
+
+            Swal.fire({
+                title: "Yakin hapus user?",
+                text: "User: " + username + " akan dihapus permanen.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+});
+</script>
+@endpush

@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>@yield('title', 'ASTERA')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -112,7 +116,7 @@
         <i class="fas fa-th-large"></i> Dashboard
     </a>
     
-    @if(auth()->user()->isAdmin() || auth()->user()->isUserInput())
+    @if(auth()->user()->isAdmin() || auth()->user()->isUser())
     <!-- Data Master -->
     <div class="mb-2">
         <button id="dataMenuButton" class="sidebar-link w-full text-left {{ request()->routeIs('data_barang.*', 'data_ruangan.*') ? 'active' : '' }}">

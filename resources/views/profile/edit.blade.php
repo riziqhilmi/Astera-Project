@@ -198,11 +198,18 @@
                     <h3 class="text-lg font-medium text-gray-900">Delete Account</h3>
                     <p class="text-sm text-gray-600">Once your account is deleted, all of its resources and data will be permanently deleted.</p>
                 </div>
-                <button class="px-4 py-2 text-red-600 hover:text-red-800 font-medium hover:bg-red-50 rounded-lg transition-all">
+                <button id="deleteAccountBtn" class="px-4 py-2 text-red-600 hover:text-red-800 font-medium hover:bg-red-50 rounded-lg transition-all">
                     Delete Account
                 </button>
             </div>
         </div>
+
+        <!-- Hidden Delete Account Form -->
+        <form id="deleteAccountForm" method="POST" action="{{ route('profile.destroy') }}" class="hidden">
+        @csrf
+        @method('DELETE')
+        <input type="password" name="password" id="deletePassword" class="hidden">
+        </form>
     </div>
 </div>
 
@@ -368,34 +375,37 @@
             });
         }
 
-        // Notification function
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full`;
-            
-            if (type === 'success') {
-                notification.className += ' bg-green-500 text-white';
-            } else if (type === 'error') {
-                notification.className += ' bg-red-500 text-white';
-            } else {
-                notification.className += ' bg-blue-500 text-white';
-            }
-            
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.classList.remove('translate-x-full');
-            }, 100);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.classList.add('translate-x-full');
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
+        // Delete Account Confirmation
+        const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+        if (deleteAccountBtn) {
+            deleteAccountBtn.addEventListener('click', async function() {
+                const { value: password } = await Swal.fire({
+                    title: 'Konfirmasi Penghapusan Akun',
+                    text: "Masukkan password Anda untuk mengkonfirmasi penghapusan akun",
+                    input: 'password',
+                    inputPlaceholder: 'Masukkan password Anda',
+                    inputAttributes: {
+                        autocapitalize: 'off',
+                        autocorrect: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Hapus Akun Saya',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true,
+                    focusCancel: true,
+                    validationMessage: 'Password wajib diisi'
+                });
+
+                if (password) {
+                    // Set password value in hidden input
+                    document.getElementById('deletePassword').value = password;
+                    
+                    // Submit the form
+                    document.getElementById('deleteAccountForm').submit();
+                }
+            });
         }
 
         // Banner image change functionality

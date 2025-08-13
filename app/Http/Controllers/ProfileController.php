@@ -71,10 +71,10 @@ class ProfileController extends Controller
     /**
      * Delete the user's account.
      */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request)
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        $request->validate([
+        'password' => ['required', 'current_password'],
         ]);
 
         $user = $request->user();
@@ -86,6 +86,6 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        return redirect('/login')->with('status', 'Akun Anda telah berhasil dihapus.');
     }
 }
