@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - ASTERA</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -40,11 +40,22 @@
             padding: 2rem;
         }
         .astera-logo {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 700;
-            color: #4A8692;
             margin-bottom: 3rem;
             font-family: 'Stretch Pro', sans-serif;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #4A8692, #58C1D1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: all 0.3s ease;
+        }
+        
+        .astera-logo:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
         }
         .feature-cards-container {
             display: flex;

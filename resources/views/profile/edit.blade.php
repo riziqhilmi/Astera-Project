@@ -1,25 +1,35 @@
 @extends('layouts.app')
 
+@php
+use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('content')
 <div class="py-12">
     <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
         <!-- Profile Banner Section -->
-        <div class="profile-banner relative rounded-2xl h-44 mb-12 overflow-hidden select-none" @if(Auth::user()->banner_image)
-             style="background-image: url('{{ asset('storage/' . Auth::user()->banner_image) }}'); background-size: cover; background-position: center;"
+        <div class="profile-banner relative rounded-2xl h-44 mb-12 overflow-hidden select-none" 
+             @if(Auth::user()->banner_image && Storage::disk('public')->exists(Auth::user()->banner_image))
+                 style="background-image: url('{{ asset('storage/' . Auth::user()->banner_image) }}'); background-size: cover; background-position: center;"
              @else
-             style="background: linear-gradient(90deg, #d6f2f2 0%, #eaf6ff 45%, #ffe5cf 100%);"
-             @endif>
+                 style="background: linear-gradient(90deg, #d6f2f2 0%, #eaf6ff 45%, #ffe5cf 100%);"
+             @endif
+             data-original-banner="{{ Auth::user()->banner_image && Storage::disk('public')->exists(Auth::user()->banner_image) ? asset('storage/' . Auth::user()->banner_image) : '' }}">
             <!-- Camera Icon for Banner -->
             <button id="bannerCameraBtn" type="button" class="absolute bottom-4 right-4 p-2 bg-white/80 border border-white rounded-lg hover:bg-white transition-all z-30 cursor-pointer focus:outline-none">
                 <i class="fas fa-camera text-gray-600"></i>
             </button>
             <!-- Hidden file input for banner -->
-            <input type="file" id="bannerInput" name="banner_image" accept="image/*" class="hidden" form="profileUpdateForm">
+            <input type="file" id="bannerInput" name="banner_image" accept="image/*" class="hidden">
             
             <!-- Avatar + text inside banner -->
             <div class="absolute inset-x-6 bottom-4 flex items-center gap-4 pr-16 z-10">
                 <div class="relative">
-                    <img id="profileAvatar" src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : 'https://randomuser.me/api/portraits/men/32.jpg' }}" alt="Profile" class="w-24 h-24 rounded-full object-cover ring-4 ring-white shadow-lg">
+                    <img id="profileAvatar" 
+                         src="{{ Auth::user()->profile_picture && Storage::disk('public')->exists(Auth::user()->profile_picture) ? asset('storage/' . Auth::user()->profile_picture) : 'https://randomuser.me/api/portraits/men/32.jpg' }}" 
+                         alt="Profile" 
+                         class="w-24 h-24 rounded-full object-cover ring-4 ring-white shadow-lg"
+                         onerror="this.src='https://randomuser.me/api/portraits/men/32.jpg'">
                     <button id="profileCameraBtn" type="button" class="absolute bottom-1 right-1 p-2 bg-teal-500 text-white rounded-full hover:bg-teal-600 shadow">
                         <i class="fas fa-camera text-xs"></i>
                     </button>
@@ -48,6 +58,16 @@
 
         <!-- Profile Form -->
         <div id="profileContent" class="bg-white rounded-lg shadow-sm border p-8 transition-all">
+            <!-- Success Message -->
+            @if (session('status') === 'profile-updated')
+                <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        <p class="text-green-700">Profile berhasil diperbarui!</p>
+                    </div>
+                </div>
+            @endif
+            
             <div class="mb-8">
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Profile</h2>
                 <p class="text-gray-600">Update your photo and personal details.</p>
@@ -57,6 +77,11 @@
                 @csrf
                 @method('patch')
                 <input type="hidden" name="email" value="{{ old('email', $user->email) }}">
+                <!-- Debug info -->
+                <div class="hidden">
+                    <p>Form action: {{ route('profile.update') }}</p>
+                    <p>CSRF token: {{ csrf_token() }}</p>
+                </div>
 
                 <!-- Username -->
                 <div>
@@ -118,6 +143,16 @@
 
         <!-- Password Form -->
         <div id="passwordContent" class="bg-white rounded-lg shadow-sm border p-8 transition-all hidden">
+            <!-- Success Message -->
+            @if (session('status') === 'password-updated')
+                <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        <p class="text-green-700">Password berhasil diperbarui!</p>
+                    </div>
+                </div>
+            @endif
+            
             <div class="mb-8">
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Password</h2>
                 <p class="text-gray-600">Update your password to keep your account secure.</p>
@@ -268,6 +303,13 @@
         const deleteProfileBtn = document.getElementById('deleteProfileBtn');
         const profileImage = document.getElementById('profileImage') || document.getElementById('profileAvatar');
         const profileInput = document.getElementById('profileInput');
+        
+        console.log('Profile elements found:', {
+            editProfileBtn: !!editProfileBtn,
+            deleteProfileBtn: !!deleteProfileBtn,
+            profileImage: !!profileImage,
+            profileInput: !!profileInput
+        });
 
         if (editProfileBtn) {
             editProfileBtn.addEventListener('click', function() {
@@ -289,9 +331,21 @@
             profileInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
+                    console.log('Profile file selected:', file.name, 'Size:', file.size);
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         profileImage.src = e.target.result;
+                        console.log('Profile image preview updated');
+                    };
+                    reader.onerror = function() {
+                        console.error('Error reading profile file');
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Gagal membaca file profile picture. Silakan coba lagi.',
+                            icon: 'error',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
                     };
                     reader.readAsDataURL(file);
                 }
@@ -301,10 +355,17 @@
         // Save and Cancel functionality
         const saveBtn = document.getElementById('saveBtn');
         const cancelBtn = document.getElementById('cancelBtn');
+        
+        console.log('Button elements found:', {
+            saveBtn: !!saveBtn,
+            cancelBtn: !!cancelBtn
+        });
 
         if (saveBtn) {
             saveBtn.addEventListener('click', function() {
                 const isProfileActive = !profileContent.classList.contains('hidden');
+                console.log('Save button clicked, profile active:', isProfileActive);
+                
                 const title = isProfileActive ? 'Simpan perubahan profil?' : 'Simpan perubahan password?';
                 const text = isProfileActive ? 'Perubahan data profil akan disimpan.' : 'Password akan diperbarui.';
                 Swal.fire({
@@ -317,11 +378,67 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         if (isProfileActive) {
+                            // Submit profile form with all data including files
                             const form = document.getElementById('profileUpdateForm');
-                            if (form) form.submit();
+                            if (form) {
+                                console.log('Submitting profile form...');
+                                
+                                // Ensure all file inputs are properly included
+                                const profileInput = document.getElementById('profileInput');
+                                const bannerInput = document.getElementById('bannerInput');
+                                
+                                console.log('Profile input files:', profileInput?.files?.length || 0);
+                                console.log('Banner input files:', bannerInput?.files?.length || 0);
+                                
+                                // If profile picture was selected, ensure it's included
+                                if (profileInput && profileInput.files.length > 0) {
+                                    console.log('Profile picture selected:', profileInput.files[0].name);
+                                }
+                                
+                                // If banner was selected, ensure it's included
+                                if (bannerInput && bannerInput.files.length > 0) {
+                                    console.log('Banner selected:', bannerInput.files[0].name);
+                                }
+                                
+                                // Ensure banner input is in the form before submitting
+                                if (bannerInput && !form.contains(bannerInput)) {
+                                    console.log('Adding banner input to form');
+                                    form.appendChild(bannerInput);
+                                }
+                                
+                                // Log form data before submission
+                                const formData = new FormData(form);
+                                console.log('Form data before submission:');
+                                for (let [key, value] of formData.entries()) {
+                                    console.log(key, ':', value);
+                                }
+                                
+                                console.log('Submitting form...');
+                                
+                                // Add error handling for form submission
+                                try {
+                                    form.submit();
+                                } catch (error) {
+                                    console.error('Error submitting form:', error);
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: 'Gagal mengirim form. Silakan coba lagi.',
+                                        icon: 'error',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                }
+                            } else {
+                                console.error('Profile form not found!');
+                            }
                         } else {
                             const pwdForm = document.getElementById('passwordUpdateForm');
-                            if (pwdForm) pwdForm.submit();
+                            if (pwdForm) {
+                                console.log('Submitting password form...');
+                                pwdForm.submit();
+                            } else {
+                                console.error('Password form not found!');
+                            }
                         }
                     }
                 });
@@ -331,6 +448,7 @@
         // Capture original state for cancel
         const bannerEl = document.querySelector('.profile-banner');
         const originalBannerBg = bannerEl ? bannerEl.style.backgroundImage : '';
+        const originalBannerData = bannerEl ? bannerEl.getAttribute('data-original-banner') : '';
         const nameInput = document.getElementById('name');
         const phoneInput = document.getElementById('phone');
         const contactEmailInput = document.getElementById('contact_email');
@@ -342,6 +460,7 @@
 
         if (cancelBtn) {
             cancelBtn.addEventListener('click', function() {
+                console.log('Cancel button clicked');
                 Swal.fire({
                     title: 'Batalkan perubahan?',
                     text: 'Semua perubahan yang belum disimpan akan hilang.',
@@ -351,18 +470,59 @@
                     cancelButtonText: 'Kembali'
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        console.log('Cancelling changes...');
+                        
                         // Revert inputs
-                        if (nameInput) nameInput.value = originalName;
-                        if (phoneInput) phoneInput.value = originalPhone;
-                        if (contactEmailInput) contactEmailInput.value = originalContactEmail;
+                        if (nameInput) {
+                            nameInput.value = originalName;
+                            console.log('Reverted name to:', originalName);
+                        }
+                        if (phoneInput) {
+                            phoneInput.value = originalPhone;
+                            console.log('Reverted phone to:', originalPhone);
+                        }
+                        if (contactEmailInput) {
+                            contactEmailInput.value = originalContactEmail;
+                            console.log('Reverted contact email to:', originalContactEmail);
+                        }
+                        
                         // Revert profile image and flags
-                        if (deleteFlagEl) deleteFlagEl.value = '0';
-                        if (profileImage) profileImage.src = originalProfileSrc;
+                        if (deleteFlagEl) {
+                            deleteFlagEl.value = '0';
+                            console.log('Reset delete profile flag');
+                        }
+                        if (profileImage) {
+                            profileImage.src = originalProfileSrc;
+                            console.log('Reverted profile image');
+                        }
+                        
+                        // Clear file inputs
                         const profileFile = document.getElementById('profileInput');
-                        if (profileFile) profileFile.value = '';
-                        // Revert banner preview
-                        if (bannerEl) bannerEl.style.backgroundImage = originalBannerBg;
-                        if (bannerInput) bannerInput.value = '';
+                        if (profileFile) {
+                            profileFile.value = '';
+                            console.log('Cleared profile file input');
+                        }
+                        
+                        // Revert banner preview to original state
+                        if (bannerEl) {
+                            if (originalBannerData && originalBannerData !== '') {
+                                bannerEl.style.backgroundImage = `url('${originalBannerData}')`;
+                                bannerEl.style.backgroundSize = 'cover';
+                                bannerEl.style.backgroundPosition = 'center';
+                                console.log('Reverted banner to original:', originalBannerData);
+                            } else {
+                                // Reset to default gradient if no original banner
+                                bannerEl.style.backgroundImage = 'linear-gradient(90deg, #d6f2f2 0%, #eaf6ff 45%, #ffe5cf 100%)';
+                                console.log('Reset banner to default gradient');
+                            }
+                        }
+                        
+                        // Clear banner file input
+                        if (bannerInput) {
+                            bannerInput.value = '';
+                            console.log('Cleared banner file input');
+                        }
+                        
                         // Feedback
                         Swal.fire({
                             title: 'Perubahan dibatalkan',
@@ -412,6 +572,12 @@
         const bannerCameraBtn = document.getElementById('bannerCameraBtn');
         const bannerInput = document.getElementById('bannerInput');
         const profileCameraBtn = document.getElementById('profileCameraBtn');
+        
+        console.log('Banner elements found:', {
+            bannerCameraBtn: !!bannerCameraBtn,
+            bannerInput: !!bannerInput,
+            profileCameraBtn: !!profileCameraBtn
+        });
 
         if (bannerCameraBtn) {
             bannerCameraBtn.addEventListener('click', function() {
@@ -429,6 +595,7 @@
             bannerInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
+                    console.log('Banner file selected:', file.name, 'Size:', file.size);
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const banner = document.querySelector('.profile-banner') || document.querySelector('.rounded-2xl.h-44');
@@ -436,7 +603,18 @@
                             banner.style.backgroundImage = `url(${e.target.result})`;
                             banner.style.backgroundSize = 'cover';
                             banner.style.backgroundPosition = 'center';
+                            console.log('Banner preview updated');
                         }
+                    };
+                    reader.onerror = function() {
+                        console.error('Error reading banner file');
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Gagal membaca file banner. Silakan coba lagi.',
+                            icon: 'error',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
                     };
                     reader.readAsDataURL(file);
                 }

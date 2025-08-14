@@ -48,4 +48,14 @@ class User extends Authenticatable
     {
         return $this->role === 'user_operasional';
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(\App\Models\Notification::class);
+    }
+
+    public function unreadNotifications()
+    {
+        return $this->notifications()->unread();
+    }
 }

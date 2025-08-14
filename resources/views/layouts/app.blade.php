@@ -8,8 +8,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'ASTERA')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Stretch+Pro:wght@400&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Notifikasi */
@@ -42,6 +43,14 @@
             font-weight: 700; 
             color: #4A8692; 
             margin-bottom: 0.25rem; 
+            font-family: 'Stretch Pro', sans-serif;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .astera-header {
+            font-family: 'Stretch Pro', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.05em;
         }
         .sidebar-user { 
             color: #2196b6; 
@@ -227,7 +236,7 @@
 
                 <!-- Center - Title -->
                 <div class="header-title text-gray-600 font-medium flex-1 text-center hidden md:block">
-                    @yield('header-title', 'ASTERA STI PLN UID JAKARTA RAYA')
+                    <span class="astera-header">@yield('header-title', 'ASTERA STI PLN UID JAKARTA RAYA')</span>
                 </div>
 
                 <!-- Right Side - Empty for now -->

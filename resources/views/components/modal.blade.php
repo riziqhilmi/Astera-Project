@@ -12,7 +12,7 @@ $maxWidth = [
 
 <div
     x-data="{
-        show: @entangle($attributes->wire:model('show')),
+        show: @entangle($attributes->get('wire:model', 'show')),
         focusables() {
             // All focusable element types...
             let selector = 'a, button, input:not([type=\'hidden\']), textarea, select, details, [tabindex]:not([tabindex=\'-1\'])'
