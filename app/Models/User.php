@@ -20,7 +20,7 @@ class User extends Authenticatable
         'contact_email',
         'profile_picture',
         'banner_image',
-        'role', // tambahkan ini
+        'role', 
     ];
 
     protected $hidden = [
@@ -41,7 +41,7 @@ class User extends Authenticatable
 
     public function isUser()
     {
-        return $this->role === 'user';
+        return $this->role === 'user_input';
     }
 
     public function isUserOperasional()

@@ -12,7 +12,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <!-- Name Field -->
             <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
                 <input type="text" id="name" name="name" value="{{ old('name') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required autofocus>
@@ -57,9 +57,7 @@
                 <select id="role" name="role" 
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required>
-                    <option value="">Select Role</option>
-                    <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>User</option>
+                    <option value="user_input" {{ old('role') == 'user_input' ? 'selected' : '' }}>User Input</option>
                     <option value="user_operasional" {{ old('role') == 'user_operasional' ? 'selected' : '' }}>User Operasional</option>
                 </select>
                 @error('role')

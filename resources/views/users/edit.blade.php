@@ -13,7 +13,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <!-- Name Field -->
             <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
                 <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required>
@@ -35,7 +35,7 @@
 
             <!-- Password Field (Optional) -->
             <div>
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password (Leave blank to keep current)</label>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password (Biarkan kosong untuk mempertahankan yang sekarang)</label>
                 <input type="password" id="password" name="password"
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 @error('password')
@@ -45,7 +45,7 @@
 
             <!-- Password Confirmation Field -->
             <div>
-                <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Password</label>
                 <input type="password" id="password_confirmation" name="password_confirmation"
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
@@ -56,8 +56,7 @@
                 <select id="role" name="role" 
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required>
-                    <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="user" {{ old('role', $user->role) == 'user' ? 'selected' : '' }}>User</option>
+                    <option value="user_input" {{ old('role', $user->role) == 'user_input' ? 'selected' : '' }}>User Input</option>
                     <option value="user_operasional" {{ old('role', $user->role) == 'user_operasional' ? 'selected' : '' }}>User Operasional</option>
                 </select>
                 @error('role')

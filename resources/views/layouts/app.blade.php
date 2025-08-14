@@ -104,11 +104,18 @@
         </button>
         <div class="sidebar-logo">ASTERA</div>
         <div class="sidebar-user">
-            {{ Auth::user()->name ?? 'User' }}
-            @if(Auth::check() && isset(Auth::user()->role))
-                ({{ Auth::user()->role }})
-            @endif
-        </div>
+    @auth
+        @php
+            $roleDisplay = [
+                'admin' => 'Admin',
+                'user_input' => 'User (Input)',
+                'user_operasional' => 'User (Operasional)'
+            ];
+            $currentRole = Auth::user()->role ?? 'user_input';
+        @endphp
+        {{ $roleDisplay[$currentRole] }}
+    @endauth
+</div>
 
         <nav class="sidebar-menu w-full mt-6">
     <!-- Dashboard -->
