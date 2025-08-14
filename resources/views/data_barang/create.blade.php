@@ -28,7 +28,7 @@
             <!-- Foto Barang -->
             <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700">Foto Barang</label>
-                <input type="file" name="foto" accept="image/*" 
+                <input type="file" name="foto" id="foto" 
                        class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm">
             </div>
 
