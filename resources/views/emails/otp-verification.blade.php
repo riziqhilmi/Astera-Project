@@ -3,137 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kode OTP Verifikasi - Astera</title>
+    <title>Kode OTP Verifikasi</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
             max-width: 600px;
-            margin: 20px auto;
-            background-color: #ffffff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            padding: 20px;
         }
         .header {
-            background: linear-gradient(135deg, #58C1D1 0%, #4A90A4 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px 20px;
-            text-align: center;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 28px;
-            font-weight: 600;
-        }
-        .content {
-            padding: 40px 30px;
-            background-color: #ffffff;
-        }
-        .greeting {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .message {
-            font-size: 16px;
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-        .otp-container {
-            background: linear-gradient(135deg, #58C1D1 0%, #4A90A4 100%);
-            border-radius: 15px;
             padding: 30px;
             text-align: center;
-            margin: 30px 0;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
         }
         .otp-code {
-            font-size: 48px;
+            background: #fff;
+            border: 2px dashed #667eea;
+            padding: 20px;
+            text-align: center;
+            font-size: 32px;
             font-weight: bold;
-            color: white;
-            letter-spacing: 8px;
-            margin: 0;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        .otp-label {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 14px;
-            margin-top: 10px;
-        }
-        .warning {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 15px;
+            color: #667eea;
             margin: 20px 0;
-        }
-        .warning p {
-            margin: 0;
-            font-size: 14px;
-            color: #856404;
+            border-radius: 10px;
+            letter-spacing: 5px;
         }
         .footer {
-            background-color: #f8f9fa;
-            padding: 20px 30px;
             text-align: center;
-            border-top: 1px solid #e9ecef;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
         }
-        .footer p {
-            margin: 0;
-            font-size: 12px;
-            color: #6c757d;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">ASTERA</div>
-            <h1>Kode OTP Verifikasi</h1>
+    <div class="header">
+        <h1>🔐 Kode OTP Verifikasi</h1>
+        <p>Halo, {{ $user->name }}!</p>
+    </div>
+    
+    <div class="content">
+        <p>Anda telah meminta kode OTP untuk verifikasi. Berikut adalah kode OTP Anda:</p>
+        
+        <div class="otp-code">
+            {{ $otp }}
         </div>
         
-        <div class="content">
-            <div class="greeting">
-                Halo <strong>{{ $user->name }}</strong>,
-            </div>
-            
-            <div class="message">
-                Terima kasih telah mendaftar di Astera. Untuk menyelesaikan proses pendaftaran, 
-                silakan masukkan kode OTP berikut:
-            </div>
-            
-            <div class="otp-container">
-                <div class="otp-code">{{ $otp }}</div>
-                <div class="otp-label">Kode OTP Anda</div>
-            </div>
-            
-            <div class="warning">
-                <p><strong>⚠️ Penting:</strong></p>
-                <p>• Kode ini berlaku selama 1 menit</p>
-                <p>• Jangan bagikan kode ini kepada siapapun</p>
-                <p>• Jika Anda tidak merasa mendaftar di Astera, abaikan email ini</p>
-            </div>
-            
-            <div class="message">
-                Jika kode OTP tidak muncul atau sudah expired, Anda dapat meminta kode baru 
-                melalui halaman verifikasi.
-            </div>
+        <div class="warning">
+            <strong>⚠️ Penting:</strong>
+            <ul>
+                <li>Kode OTP ini hanya berlaku selama 60 detik</li>
+                <li>Jangan bagikan kode ini kepada siapapun</li>
+                <li>Jika Anda tidak meminta kode ini, abaikan email ini</li>
+            </ul>
         </div>
         
-        <div class="footer">
-            <p>© {{ date('Y') }} Astera. Semua hak dilindungi.</p>
-            <p>Email ini dikirim secara otomatis, mohon tidak membalas email ini.</p>
-        </div>
+        <p>Masukkan kode di atas pada halaman verifikasi untuk melanjutkan.</p>
+        
+        <p>Terima kasih,<br>
+        <strong>Tim Astera Project</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>Email ini dikirim secara otomatis. Mohon tidak membalas email ini.</p>
+        <p>&copy; {{ date('Y') }} Astera Project. All rights reserved.</p>
     </div>
 </body>
 </html>

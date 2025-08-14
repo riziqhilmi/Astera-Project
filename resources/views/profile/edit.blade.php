@@ -4,45 +4,35 @@
 <div class="py-12">
     <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
         <!-- Profile Banner Section -->
-        <div class="relative bg-gradient-to-r from-blue-200 via-green-200 via-yellow-200 to-orange-200 rounded-2xl p-8 mb-8 overflow-hidden">
+        <div class="profile-banner relative rounded-2xl h-44 mb-12 overflow-hidden select-none" @if(Auth::user()->banner_image)
+             style="background-image: url('{{ asset('storage/' . Auth::user()->banner_image) }}'); background-size: cover; background-position: center;"
+             @else
+             style="background: linear-gradient(90deg, #d6f2f2 0%, #eaf6ff 45%, #ffe5cf 100%);"
+             @endif>
             <!-- Camera Icon for Banner -->
-            <button id="bannerCameraBtn" class="absolute top-4 right-4 p-2 bg-white bg-opacity-80 rounded-full hover:bg-opacity-100 transition-all hover:scale-110">
+            <button id="bannerCameraBtn" type="button" class="absolute bottom-4 right-4 p-2 bg-white/80 border border-white rounded-lg hover:bg-white transition-all z-30 cursor-pointer focus:outline-none">
                 <i class="fas fa-camera text-gray-600"></i>
             </button>
-            
             <!-- Hidden file input for banner -->
-            <input type="file" id="bannerInput" accept="image/*" class="hidden">
+            <input type="file" id="bannerInput" name="banner_image" accept="image/*" class="hidden" form="profileUpdateForm">
             
-            <div class="flex items-center gap-6">
-                <!-- Large Profile Picture -->
+            <!-- Avatar + text inside banner -->
+            <div class="absolute inset-x-6 bottom-4 flex items-center gap-4 pr-16 z-10">
                 <div class="relative">
-                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover">
-                    <button id="profileCameraBtn" class="absolute bottom-0 right-0 p-2 bg-teal-500 text-white rounded-full hover:bg-teal-600 transition-colors hover:scale-110">
-                        <i class="fas fa-camera text-sm"></i>
+                    <img id="profileAvatar" src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : 'https://randomuser.me/api/portraits/men/32.jpg' }}" alt="Profile" class="w-24 h-24 rounded-full object-cover ring-4 ring-white shadow-lg">
+                    <button id="profileCameraBtn" type="button" class="absolute bottom-1 right-1 p-2 bg-teal-500 text-white rounded-full hover:bg-teal-600 shadow">
+                        <i class="fas fa-camera text-xs"></i>
                     </button>
                 </div>
-                
-                <!-- Profile Info -->
-                <div class="flex-1">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Setting</h1>
-                    <p class="text-gray-600">{{ Auth::user()->email ?? 'Hendrickmoseng@gmail.com' }}</p>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="flex gap-3">
-                    <button id="cancelBtn" class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all hover:-translate-y-0.5">
-                        Cancel
-                    </button>
-                    <button id="saveBtn" class="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-all hover:-translate-y-0.5 shadow-lg">
-                        Save
-                    </button>
+                <div>
+                    <h1 class="text-2xl font-semibold text-gray-800">Setting</h1>
+                    <p class="text-sm text-gray-700">{{ Auth::user()->email ?? 'Hendrickmoseng@gmail.com' }}</p>
                 </div>
             </div>
         </div>
-
-        <!-- Tabs -->
-        <div class="border-b border-gray-200 mb-8">
-            <nav class="flex space-x-8">
+        <!-- Profile header under banner -->
+        <div class="flex items-center justify-between -mt-10 mb-6 pr-2 border-b border-gray-200 pb-2">
+            <nav class="flex items-center gap-8">
                 <button id="profileTab" class="py-2 px-1 border-b-2 border-teal-500 text-teal-500 font-medium transition-all cursor-pointer" data-tab="profile">
                     Profile
                 </button>
@@ -50,6 +40,10 @@
                     Password
                 </button>
             </nav>
+            <div class="flex gap-2 mr-2">
+                <button id="cancelBtn" type="button" class="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition">Cancel</button>
+                <button id="saveBtn" type="button" class="px-4 py-1.5 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition">Save</button>
+            </div>
         </div>
 
         <!-- Profile Form -->
@@ -59,9 +53,10 @@
                 <p class="text-gray-600">Update your photo and personal details.</p>
             </div>
 
-            <form method="post" action="{{ route('profile.update') }}" class="space-y-6">
+            <form id="profileUpdateForm" method="post" action="{{ route('profile.update') }}" class="space-y-6" enctype="multipart/form-data">
                 @csrf
                 @method('patch')
+                <input type="hidden" name="email" value="{{ old('email', $user->email) }}">
 
                 <!-- Username -->
                 <div>
@@ -77,19 +72,12 @@
                 <!-- Profile Picture -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Profile Picture</label>
-                    <div class="flex items-center gap-4">
-                        <img id="profileImage" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="w-16 h-16 rounded-full border-2 border-gray-200 object-cover">
-                        <div class="flex gap-3">
-                            <button id="editProfileBtn" type="button" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-all hover:scale-105">
-                                Edit
-                            </button>
-                            <button id="deleteProfileBtn" type="button" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all hover:scale-105">
-                                Delete
-                            </button>
-                        </div>
+                    <div class="flex items-center gap-3">
+                        <button id="editProfileBtn" type="button" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-all">Upload New</button>
+                        <button id="deleteProfileBtn" type="button" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all">Remove</button>
                     </div>
-                    <!-- Hidden file input for profile picture -->
-                    <input type="file" id="profileInput" accept="image/*" class="hidden">
+                    <input type="file" id="profileInput" name="profile_picture" accept="image/*" class="hidden">
+                    <input type="hidden" id="deleteProfileFlag" name="delete_profile_picture" value="0">
                 </div>
 
                 <!-- Phone Number -->
@@ -100,7 +88,7 @@
                             <img src="https://flagcdn.com/w20/id.png" alt="ID" class="w-5 h-3 mr-2">
                             <span>+62</span>
                         </div>
-                        <input type="tel" id="phone" name="phone" value="851-894-2348"
+                        <input type="tel" id="phone" name="phone" value="{{ old('phone', Auth::user()->phone) }}"
                                class="flex-1 px-3 py-2 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                                placeholder="Enter phone number">
                     </div>
@@ -113,7 +101,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-envelope text-gray-400"></i>
                         </div>
-                        <input type="email" id="contact_email" name="contact_email" value="{{ Auth::user()->email ?? 'example@example.com' }}"
+                        <input type="email" id="contact_email" name="contact_email" value="{{ old('contact_email', Auth::user()->contact_email ?? Auth::user()->email) }}"
                                class="w-full pl-10 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                                placeholder="Enter contact email">
                     </div>
@@ -135,7 +123,12 @@
                 <p class="text-gray-600">Update your password to keep your account secure.</p>
             </div>
 
-            <form method="post" action="{{ route('password.update') }}" class="space-y-6">
+            <!-- Hidden standalone form to send OTP without nesting -->
+            <form id="sendOtpForm" method="POST" action="{{ route('password.send-otp') }}" class="hidden">
+                @csrf
+            </form>
+
+            <form id="passwordUpdateForm" method="post" action="{{ route('password.update') }}" class="space-y-6">
                 @csrf
                 @method('put')
 
@@ -169,6 +162,26 @@
                            placeholder="Confirm new password">
                 </div>
 
+                <!-- OTP Code -->
+                <div>
+                    <label for="otp_code" class="block text-sm font-medium text-gray-700 mb-2">OTP Code</label>
+                    <div class="flex gap-3">
+                        <input type="text" id="otp_code" name="otp_code" maxlength="4"
+                               class="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                               placeholder="1234">
+                        <button id="sendOtpButton" type="submit" form="sendOtpForm" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Kirim OTP</button>
+                    </div>
+                    @if (session('status') && session('open_tab') === 'password')
+                        <p class="mt-2 text-sm text-green-600">{{ session('status') }}</p>
+                    @endif
+                    @if (session('error') && session('open_tab') === 'password')
+                        <p class="mt-2 text-sm text-red-600">{{ session('error') }}</p>
+                    @endif
+                    @error('otp_code', 'updatePassword')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Save Button -->
                 <div class="flex justify-end pt-6">
                     <button type="submit" class="px-6 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-all hover:-translate-y-0.5 shadow-lg">
@@ -185,14 +198,22 @@
                     <h3 class="text-lg font-medium text-gray-900">Delete Account</h3>
                     <p class="text-sm text-gray-600">Once your account is deleted, all of its resources and data will be permanently deleted.</p>
                 </div>
-                <button class="px-4 py-2 text-red-600 hover:text-red-800 font-medium hover:bg-red-50 rounded-lg transition-all">
+                <button id="deleteAccountBtn" class="px-4 py-2 text-red-600 hover:text-red-800 font-medium hover:bg-red-50 rounded-lg transition-all">
                     Delete Account
                 </button>
             </div>
         </div>
+
+        <!-- Hidden Delete Account Form -->
+        <form id="deleteAccountForm" method="POST" action="{{ route('profile.destroy') }}" class="hidden">
+        @csrf
+        @method('DELETE')
+        <input type="password" name="password" id="deletePassword" class="hidden">
+        </form>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Tab functionality
     document.addEventListener('DOMContentLoaded', function() {
@@ -237,10 +258,15 @@
         profileTab.addEventListener('click', () => switchTab('profile'));
         passwordTab.addEventListener('click', () => switchTab('password'));
 
+        // If server indicates to open specific tab
+        @if (session('open_tab') === 'password')
+            switchTab('password');
+        @endif
+
         // Profile picture edit functionality
         const editProfileBtn = document.getElementById('editProfileBtn');
         const deleteProfileBtn = document.getElementById('deleteProfileBtn');
-        const profileImage = document.getElementById('profileImage');
+        const profileImage = document.getElementById('profileImage') || document.getElementById('profileAvatar');
         const profileInput = document.getElementById('profileInput');
 
         if (editProfileBtn) {
@@ -252,6 +278,8 @@
         if (deleteProfileBtn) {
             deleteProfileBtn.addEventListener('click', function() {
                 if (confirm('Are you sure you want to delete your profile picture?')) {
+                    const deleteFlag = document.getElementById('deleteProfileFlag');
+                    if (deleteFlag) deleteFlag.value = '1';
                     profileImage.src = 'https://randomuser.me/api/portraits/men/32.jpg';
                 }
             });
@@ -276,48 +304,108 @@
 
         if (saveBtn) {
             saveBtn.addEventListener('click', function() {
-                // Show success message
-                showNotification('Profile updated successfully!', 'success');
+                const isProfileActive = !profileContent.classList.contains('hidden');
+                const title = isProfileActive ? 'Simpan perubahan profil?' : 'Simpan perubahan password?';
+                const text = isProfileActive ? 'Perubahan data profil akan disimpan.' : 'Password akan diperbarui.';
+                Swal.fire({
+                    title: title,
+                    text: text,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, simpan',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        if (isProfileActive) {
+                            const form = document.getElementById('profileUpdateForm');
+                            if (form) form.submit();
+                        } else {
+                            const pwdForm = document.getElementById('passwordUpdateForm');
+                            if (pwdForm) pwdForm.submit();
+                        }
+                    }
+                });
             });
         }
+
+        // Capture original state for cancel
+        const bannerEl = document.querySelector('.profile-banner');
+        const originalBannerBg = bannerEl ? bannerEl.style.backgroundImage : '';
+        const nameInput = document.getElementById('name');
+        const phoneInput = document.getElementById('phone');
+        const contactEmailInput = document.getElementById('contact_email');
+        const deleteFlagEl = document.getElementById('deleteProfileFlag');
+        const originalName = nameInput ? nameInput.value : '';
+        const originalPhone = phoneInput ? phoneInput.value : '';
+        const originalContactEmail = contactEmailInput ? contactEmailInput.value : '';
+        const originalProfileSrc = profileImage ? profileImage.src : '';
 
         if (cancelBtn) {
             cancelBtn.addEventListener('click', function() {
-                // Reset form to original values
-                if (confirm('Are you sure you want to cancel? All changes will be lost.')) {
-                    location.reload();
-                }
+                Swal.fire({
+                    title: 'Batalkan perubahan?',
+                    text: 'Semua perubahan yang belum disimpan akan hilang.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, batalkan',
+                    cancelButtonText: 'Kembali'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Revert inputs
+                        if (nameInput) nameInput.value = originalName;
+                        if (phoneInput) phoneInput.value = originalPhone;
+                        if (contactEmailInput) contactEmailInput.value = originalContactEmail;
+                        // Revert profile image and flags
+                        if (deleteFlagEl) deleteFlagEl.value = '0';
+                        if (profileImage) profileImage.src = originalProfileSrc;
+                        const profileFile = document.getElementById('profileInput');
+                        if (profileFile) profileFile.value = '';
+                        // Revert banner preview
+                        if (bannerEl) bannerEl.style.backgroundImage = originalBannerBg;
+                        if (bannerInput) bannerInput.value = '';
+                        // Feedback
+                        Swal.fire({
+                            title: 'Perubahan dibatalkan',
+                            icon: 'success',
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                    }
+                });
             });
         }
 
-        // Notification function
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full`;
-            
-            if (type === 'success') {
-                notification.className += ' bg-green-500 text-white';
-            } else if (type === 'error') {
-                notification.className += ' bg-red-500 text-white';
-            } else {
-                notification.className += ' bg-blue-500 text-white';
-            }
-            
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.classList.remove('translate-x-full');
-            }, 100);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.classList.add('translate-x-full');
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
+        // Delete Account Confirmation
+        const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+        if (deleteAccountBtn) {
+            deleteAccountBtn.addEventListener('click', async function() {
+                const { value: password } = await Swal.fire({
+                    title: 'Konfirmasi Penghapusan Akun',
+                    text: "Masukkan password Anda untuk mengkonfirmasi penghapusan akun",
+                    input: 'password',
+                    inputPlaceholder: 'Masukkan password Anda',
+                    inputAttributes: {
+                        autocapitalize: 'off',
+                        autocorrect: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Hapus Akun Saya',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true,
+                    focusCancel: true,
+                    validationMessage: 'Password wajib diisi'
+                });
+
+                if (password) {
+                    // Set password value in hidden input
+                    document.getElementById('deletePassword').value = password;
+                    
+                    // Submit the form
+                    document.getElementById('deleteAccountForm').submit();
+                }
+            });
         }
 
         // Banner image change functionality
@@ -343,11 +431,12 @@
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(e) {
-                        // Update banner background
-                        const banner = document.querySelector('.bg-gradient-to-r');
-                        banner.style.backgroundImage = `url(${e.target.result})`;
-                        banner.style.backgroundSize = 'cover';
-                        banner.style.backgroundPosition = 'center';
+                        const banner = document.querySelector('.profile-banner') || document.querySelector('.rounded-2xl.h-44');
+                        if (banner) {
+                            banner.style.backgroundImage = `url(${e.target.result})`;
+                            banner.style.backgroundSize = 'cover';
+                            banner.style.backgroundPosition = 'center';
+                        }
                     };
                     reader.readAsDataURL(file);
                 }

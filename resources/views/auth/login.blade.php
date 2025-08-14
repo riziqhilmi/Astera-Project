@@ -388,28 +388,7 @@
                     </button>
                 </form>
 
-                <!-- Divider -->
-                <div class="divider">
-                    <div class="divider-line"></div>
-                    <span class="divider-text">atau</span>
-                    <div class="divider-line"></div>
-                </div>
-
-                <!-- Google Login Button -->
-                <button class="google-btn">
-                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="w-5 h-5">
-                    Google
-                </button>
-
-                <!-- Sign Up Link -->
-                <div class="text-center mt-6">
-                    <p class="text-sm grey-text signup-text">
-                        Anda tidak punya akun? 
-                        <a href="{{ route('register') }}" class="signup-link font-medium">
-                            Daftar
-                        </a>
-                    </p>
-                </div>
+                
             </div>
         </div>
     </div>

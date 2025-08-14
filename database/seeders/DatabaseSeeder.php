@@ -21,19 +21,23 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        // Create default user for login
-        User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@astera.com',
-            'password' => Hash::make('password123'),
-            'email_verified_at' => now(),
-        ]);
+        // Create or update default users
+        User::updateOrCreate(
+            ['email' => 'admin@astera.com'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('admin01'),
+                'email_verified_at' => now(),
+            ]
+        );
 
-        User::create([
-            'name' => 'User Test',
-            'email' => 'user@astera.com',
-            'password' => Hash::make('password123'),
-            'email_verified_at' => now(),
-        ]);
+        User::updateOrCreate(
+            ['email' => 'user@astera.com'],
+            [
+                'name' => 'User Test',
+                'password' => Hash::make('password123'),
+                'email_verified_at' => now(),
+            ]
+        );
     }
 }
