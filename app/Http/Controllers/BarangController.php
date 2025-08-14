@@ -10,11 +10,29 @@ use Illuminate\Support\Facades\Storage;
 
 class BarangController extends Controller
 {
-    public function index()
-    {
-        $barang = Barang::with('ruangan')->get();
-        return view('data_barang.index', compact('barang'));
+    public function index(Request $request)
+{
+    // Simpan keyword pencarian untuk dikirim ke view
+    $search = $request->input('search');
+
+    // Mulai query barang dengan relasi 'ruangan'
+    $query = Barang::with('ruangan');
+
+    // Jika ada input pencarian
+    if ($request->filled('search')) {
+        $query->where(function ($q) use ($search) {
+            $q->where('nama', 'like', '%' . $search . '%')
+              ->orWhere('id', 'like', '%' . $search . '%')
+              ->orWhere('kategori', 'like', '%' . $search . '%');
+        });
     }
+
+    // Ambil data hasil pencarian atau semua barang
+    $barang = $query->get();
+
+    // Kirim data + search ke view
+    return view('data_barang.index', compact('barang', 'search'));
+}
 
     public function create()
     {

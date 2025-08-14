@@ -9,6 +9,7 @@ use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\BarangMasukController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 
 
@@ -26,8 +27,19 @@ Route::middleware(['auth', 'otp.verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/user/data', [UserController::class, 'data'])->name('user.data');
     
+    // Test route untuk profile
+    Route::get('/profile-test', function () {
+        return view('profile.test');
+    })->name('profile.test');
+    
+    // Demo route untuk profile settings
+    Route::get('/profile-settings-demo', function () {
+        return view('demo');
+    })->name('profile.settings.demo');
+    
     Route::resource('data_barang', BarangController::class);
     Route::resource('data_ruangan', RuanganController::class);
+    
 });
 
 // Operasional Routes

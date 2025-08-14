@@ -94,7 +94,6 @@
         <div id="sidebarOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-20"></div>
         
         <!-- Sidebar -->
-        <!-- Sidebar -->
 <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full z-30 bg-white transition-transform duration-300 ease-in-out translate-x-0 w-[200px] rounded-r-2xl flex flex-col justify-between pt-8">
     <!-- Bagian Atas -->
     <div class="flex flex-col items-center w-full px-2">
@@ -156,14 +155,40 @@
         </nav>
     </div>
 
-    <!-- Bagian Bawah (Logout) -->
-    <div class="w-full px-2 mb-6">
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="sidebar-link text-red-600 hover:text-red-800">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
-        </form>
+    <!-- Bagian Bawah (Profile, Notifications, Settings, Logout) -->
+    <div class="w-full px-2 mb-6 space-y-3">
+        <!-- Settings -->
+        <a href="{{ route('profile.edit') }}" class="sidebar-link {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+            <i class="fas fa-cog"></i> Setting
+        </a>
+        
+        <!-- Profile Summary -->
+        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" 
+                alt="Profile" 
+                class="w-10 h-10 rounded-full object-cover border-2 border-gray-200">
+            <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-gray-700">
+            {{ Auth::user()->name ?? 'User' }}
+        </p>
+    </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <!-- Notification Bell -->
+                <div class="relative">
+                    <button id="notificationBell" class="p-1 rounded-full hover:bg-gray-200 transition-colors focus:outline-none">
+                        <i class="far fa-bell text-gray-500 text-sm"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+                    </button>
+                </div>
+                <!-- Logout -->
+                <form method="POST" action="{{ route('logout') }}" class="inline">
+                    @csrf
+                    <button type="submit" class="p-1 rounded-full hover:bg-gray-200 transition-colors focus:outline-none text-red-500 hover:text-red-700">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 </aside>
 
@@ -180,24 +205,8 @@
                     @yield('header-title', 'ASTERA STI PLN UID JAKARTA RAYA')
                 </div>
 
-                <!-- Right Side - Notifications and Profile -->
+                <!-- Right Side - Empty for now -->
                 <div class="flex items-center space-x-4">
-                    <!-- Notification Bell -->
-                    <div class="relative">
-                        <button id="notificationBell" class="p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none">
-                            <i class="far fa-bell text-gray-500 text-xl"></i>
-                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-                        </button>
-                    </div>
-
-                    <!-- Profile -->
-                    <div class="flex items-center space-x-3">
-                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-gray-200">
-                        <div class="hidden md:block">
-                            <p class="text-sm font-medium text-gray-700">{{ Auth::user()->name ?? 'User' }}</p>
-                            <p class="text-xs text-gray-500">User</p>
-                        </div>
-                    </div>
                 </div>
             </div>
             

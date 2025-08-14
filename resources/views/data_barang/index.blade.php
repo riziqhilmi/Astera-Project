@@ -11,6 +11,21 @@
         </a>
     </div>
 
+    <form method="GET" action="{{ route('data_barang.index') }}" class="mb-4">
+    <div class="flex gap-2">
+        <input 
+            type="text" 
+            name="search" 
+            value="{{ request('search') }}" 
+            placeholder="Cari barang" 
+            class="border rounded px-3 py-2 w-full"
+        >
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+            Cari
+        </button>
+    </div>
+</form>
+
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white">
             <thead>
@@ -27,6 +42,8 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
+            
+
                 @foreach($barang as $item)
                 <tr>
                     <td class="py-3 px-4">{{ $loop->iteration }}</td>
