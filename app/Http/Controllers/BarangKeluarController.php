@@ -6,6 +6,8 @@ use App\Models\Barang;
 use App\Models\BarangKeluar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\NotificationService;
+use Illuminate\Support\Facades\Auth;
 
 class BarangKeluarController extends Controller
 {
@@ -16,8 +18,8 @@ class BarangKeluarController extends Controller
         
         // Data untuk chart
         $chartData = BarangKeluar::select(
-            DB::raw('MONTH(tanggal_keluar) as month'),
-            DB::raw('YEAR(tanggal_keluar) as year'),
+            DB::raw('strftime("%m", tanggal_keluar) as month'),
+            DB::raw('strftime("%Y", tanggal_keluar) as year'),
             DB::raw('SUM(jumlah) as total')
         )
         ->groupBy('year', 'month')
@@ -61,6 +63,29 @@ class BarangKeluarController extends Controller
     
     // Kurangi stok barang
     $barang->decrement('total', $request->jumlah);
+    
+    // Buat notifikasi untuk admin dan user operasional
+    $users = \App\Models\User::whereIn('role', ['admin', 'user_operasional'])->get();
+    foreach ($users as $user) {
+        NotificationService::createBarangKeluarNotification(
+            $user,
+            $barang->nama_barang,
+            $request->jumlah
+        );
+    }
+    
+    // Cek apakah stok menipis atau habis
+    if ($barang->total <= 0) {
+        // Notifikasi stok habis
+        foreach ($users as $user) {
+            NotificationService::createStokHabisNotification($user, $barang->nama_barang);
+        }
+    } elseif ($barang->total <= 5) {
+        // Notifikasi stok menipis
+        foreach ($users as $user) {
+            NotificationService::createStokMenipisNotification($user, $barang->nama_barang, $barang->total);
+        }
+    }
     
     return redirect()->route('barang_keluar.index')
         ->with('success', 'Barang keluar berhasil dicatat');

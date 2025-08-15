@@ -10,7 +10,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $cacheKey = 'dashboard_stats_' . auth()->id() . '_' . Barang::max('updated_at');
+        $cacheKey = 'dashboard_stats_' . auth()->id() . '_' . (Barang::max('updated_at') ?? now());
         
         $data = Cache::remember($cacheKey, now()->addMinutes(15), function () {
             // Data dasar
@@ -31,9 +31,9 @@ class DashboardController extends Controller
             $persenRusakQuantity = $totalQuantity > 0 ? ($barangRusakQuantity / $totalQuantity) * 100 : 0;
             
             // Data untuk chart distribusi ruangan
-            $ruanganLabels = Ruangan::pluck('nama') ?? [];
-            $barangPerRuangan = Ruangan::withCount('barangs')->pluck('barangs_count') ?? [];
-            $barangQuantityPerRuangan = Ruangan::withSum('barangs', 'total')->pluck('barangs_sum_total') ?? [];
+            $ruanganLabels = Ruangan::pluck('nama')->toArray() ?? [];
+            $barangPerRuangan = Ruangan::withCount('barangs')->pluck('barangs_count')->toArray() ?? [];
+            $barangQuantityPerRuangan = Ruangan::withSum('barangs', 'total')->pluck('barangs_sum_total')->toArray() ?? [];
             
             // Data default jika tidak ada data
             $defaultChartData = [0, 0, 0];

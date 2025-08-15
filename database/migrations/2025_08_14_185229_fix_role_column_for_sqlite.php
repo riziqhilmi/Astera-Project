@@ -12,18 +12,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // First, change the column type to string temporarily
+        // For SQLite compatibility, we'll use string instead of enum
         Schema::table('users', function (Blueprint $table) {
             $table->string('role')->default('user_input')->change();
         });
         
         // Update existing user records to user_input
         DB::table('users')->where('role', 'user')->update(['role' => 'user_input']);
-        
-        // Now change back to enum with new values
-        Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['admin', 'user_input', 'user_operasional'])->default('user_input')->change();
-        });
     }
 
     /**
@@ -31,17 +26,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // First, change the column type to string temporarily
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('user')->change();
-        });
-        
         // Update existing user_input records back to user
         DB::table('users')->where('role', 'user_input')->update(['role' => 'user']);
         
-        // Now change back to enum with original values
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['admin', 'user', 'user_operasional'])->default('user')->change();
+            $table->string('role')->default('user')->change();
         });
     }
 };
