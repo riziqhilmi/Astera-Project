@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Stretch+Pro:wght@400&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ asset('css/notification-bell.css') }}" rel="stylesheet">
     <link href="{{ asset('css/sidebar-fix.css') }}" rel="stylesheet">
     <style>
         body { 
@@ -498,25 +499,23 @@
                     </div>
                     <div class="flex items-center gap-2 flex-shrink-0">
                         <!-- Notification Bell -->
-                        <div class="relative">
+                        <div class="notification-bell">
                             <button id="notificationBell" class="p-2 rounded-full hover:bg-gray-200 transition-colors focus:outline-none">
                                 <i class="far fa-bell text-gray-500 text-sm"></i>
-                                <span id="notificationCount" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">0</span>
+                                <span id="notificationCount" class="notification-count hidden">0</span>
                             </button>
                             
                             <!-- Notification Dropdown -->
-                            <div id="notificationDropdown" class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 hidden">
-                                <div class="p-4 border-b border-gray-200">
-                                    <div class="flex items-center justify-between">
-                                        <h3 class="text-lg font-semibold text-gray-800">Notifications</h3>
-                                        <button onclick="markAllAsRead()" class="text-sm text-blue-600 hover:text-blue-800">Mark all read</button>
-                                    </div>
+                            <div id="notificationDropdown" class="notification-dropdown hidden">
+                                <div class="notification-header">
+                                    <h3>Notifikasi</h3>
+                                    <button onclick="markAllAsRead()" class="mark-all-read">Tandai semua dibaca</button>
                                 </div>
-                                <div id="notificationList" class="max-h-96 overflow-y-auto">
+                                <div id="notificationList" class="notification-list">
                                     <!-- Notifications will be loaded here -->
                                 </div>
-                                <div class="p-4 border-t border-gray-200 text-center">
-                                    <a href="#" class="text-sm text-blue-600 hover:text-blue-800">View all notifications</a>
+                                <div class="notification-footer">
+                                    <a href="#" class="view-all-link">Lihat semua notifikasi</a>
                                 </div>
                             </div>
                         </div>
@@ -674,51 +673,30 @@
         let unreadCount = 0;
 
         function toggleNotifications(event) {
-            console.log('=== TOGGLE NOTIFICATIONS CLICKED ===');
-            console.log('Event type:', event.type);
-            console.log('Event target:', event.target);
-            console.log('Event currentTarget:', event.currentTarget);
-            console.log('Event timestamp:', event.timeStamp);
-            
-            // Prevent default and stop propagation
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
-                event.stopImmediatePropagation();
             }
             
             const dropdown = document.getElementById('notificationDropdown');
             const bell = document.getElementById('notificationBell');
-            const count = document.getElementById('notificationCount');
             
-            console.log('🔍 Element Check in toggleNotifications:');
-            console.log('  - Dropdown element:', dropdown);
-            console.log('  - Bell element:', bell);
-            console.log('  - Count element:', count);
-            
-            if (!dropdown) {
-                console.error('❌ Notification dropdown not found');
-                return false;
-            }
-            
-            if (!bell) {
-                console.error('❌ Notification bell not found');
+            if (!dropdown || !bell) {
+                console.error('Notification elements not found');
                 return false;
             }
             
             const isHidden = dropdown.classList.contains('hidden');
-            console.log('Current dropdown state (hidden):', isHidden);
             
             if (isHidden) {
                 dropdown.classList.remove('hidden');
-                console.log('✅ Dropdown shown');
+                dropdown.classList.add('show');
                 loadNotifications();
             } else {
                 dropdown.classList.add('hidden');
-                console.log('✅ Dropdown hidden');
+                dropdown.classList.remove('show');
             }
             
-            console.log('New dropdown state (hidden):', dropdown.classList.contains('hidden'));
             return false;
         }
 
@@ -729,46 +707,47 @@
             
             if (dropdown && bell) {
                 if (!dropdown.contains(event.target) && !bell.contains(event.target)) {
-                    console.log('Click outside detected, closing dropdown');
                     dropdown.classList.add('hidden');
+                    dropdown.classList.remove('show');
                 }
             }
         });
 
         async function loadNotifications() {
             try {
-                console.log('📡 Loading notifications from API...');
                 const response = await fetch('/notifications');
-                console.log('📡 API response status:', response.status);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
                 const data = await response.json();
-                console.log('📡 Notifications data:', data);
                 
-                notifications = data.notifications || [];
-                unreadCount = data.unread_count || 0;
-                
-                console.log('📊 Loaded notifications:', notifications.length);
-                console.log('📊 Unread count:', unreadCount);
-                
-                updateNotificationCount();
-                renderNotifications();
+                if (data.success) {
+                    notifications = data.notifications || [];
+                    unreadCount = data.unread_count || 0;
+                    
+                    updateNotificationCount();
+                    renderNotifications();
+                } else {
+                    throw new Error(data.error || 'Failed to load notifications');
+                }
             } catch (error) {
-                console.error('❌ Error loading notifications:', error);
-                // Show error in notification list
+                console.error('Error loading notifications:', error);
                 const list = document.getElementById('notificationList');
                 if (list) {
-                    list.innerHTML = '<div class="p-4 text-center text-red-500">Error loading notifications: ' + error.message + '</div>';
+                    list.innerHTML = `
+                        <div class="notification-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Error loading notifications: ${error.message}</p>
+                        </div>
+                    `;
                 }
             }
         }
 
         function updateNotificationCount() {
             const countElement = document.getElementById('notificationCount');
-            console.log('Updating notification count:', unreadCount);
             
             if (!countElement) {
                 console.error('Notification count element not found');
@@ -778,16 +757,13 @@
             if (unreadCount > 0) {
                 countElement.textContent = unreadCount;
                 countElement.classList.remove('hidden');
-                console.log('Notification count updated to:', unreadCount);
             } else {
                 countElement.classList.add('hidden');
-                console.log('Notification count hidden (0 unread)');
             }
         }
 
         function renderNotifications() {
             const list = document.getElementById('notificationList');
-            console.log('Rendering notifications:', notifications.length);
             
             if (!list) {
                 console.error('Notification list element not found');
@@ -795,30 +771,33 @@
             }
             
             if (notifications.length === 0) {
-                list.innerHTML = '<div class="p-4 text-center text-gray-500">No notifications</div>';
-                console.log('Rendered: No notifications');
+                list.innerHTML = `
+                    <div class="notification-empty">
+                        <i class="far fa-bell"></i>
+                        <p>Tidak ada notifikasi</p>
+                    </div>
+                `;
                 return;
             }
 
             const html = notifications.map(notification => `
-                <div class="p-3 border-b border-gray-100 hover:bg-gray-50 ${notification.is_read ? 'opacity-75' : 'bg-blue-50'}" 
+                <div class="notification-item ${notification.is_read ? 'read' : 'unread'}" 
                      onclick="markAsRead(${notification.id})">
-                    <div class="flex items-start gap-3">
-                        <div class="flex-shrink-0 mt-1">
+                    <div class="notification-content">
+                        <div class="notification-icon">
                             <i class="${notification.icon || 'fas fa-info-circle'} text-${notification.color}-500"></i>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-800">${notification.title}</p>
-                            <p class="text-xs text-gray-600 mt-1">${notification.message}</p>
-                            <p class="text-xs text-gray-400 mt-1">${formatTime(notification.created_at)}</p>
+                        <div class="notification-text">
+                            <p class="notification-title">${notification.title}</p>
+                            <p class="notification-message">${notification.message}</p>
+                            <p class="notification-time">${formatTime(notification.created_at)}</p>
                         </div>
-                        ${!notification.is_read ? '<div class="w-2 h-2 bg-blue-500 rounded-full"></div>' : ''}
+                        ${!notification.is_read ? '<div class="notification-unread-indicator"></div>' : ''}
                     </div>
                 </div>
             `).join('');
             
             list.innerHTML = html;
-            console.log('Rendered', notifications.length, 'notifications');
         }
 
         async function markAsRead(notificationId) {
@@ -836,7 +815,7 @@
                 if (data.success) {
                     unreadCount = data.unread_count;
                     updateNotificationCount();
-                    loadNotifications(); // Refresh the list
+                    loadNotifications();
                 }
             } catch (error) {
                 console.error('Error marking notification as read:', error);
@@ -857,7 +836,7 @@
                 if (data.success) {
                     unreadCount = 0;
                     updateNotificationCount();
-                    loadNotifications(); // Refresh the list
+                    loadNotifications();
                 }
             } catch (error) {
                 console.error('Error marking all notifications as read:', error);
@@ -869,16 +848,14 @@
             const now = new Date();
             const diffInMinutes = Math.floor((now - date) / (1000 * 60));
             
-            if (diffInMinutes < 1) return 'Just now';
-            if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-            if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-            return date.toLocaleDateString();
+            if (diffInMinutes < 1) return 'Baru saja';
+            if (diffInMinutes < 60) return `${diffInMinutes}m yang lalu`;
+            if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}j yang lalu`;
+            return date.toLocaleDateString('id-ID');
         }
 
         // Initialize everything when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 DOM loaded, initializing...');
-            
             // Initialize sidebar
             handleResize();
             
@@ -887,54 +864,19 @@
             const dropdown = document.getElementById('notificationDropdown');
             const count = document.getElementById('notificationCount');
             
-            console.log('🔍 Element Check:');
-            console.log('  - Notification bell:', bell ? '✅ Found' : '❌ Missing');
-            console.log('  - Notification dropdown:', dropdown ? '✅ Found' : '❌ Missing');
-            console.log('  - Notification count:', count ? '✅ Found' : '❌ Missing');
-            
             if (bell && dropdown && count) {
-                console.log('✅ All notification elements found, initializing system...');
-                
-                // Test click event on bell
-                console.log('🔔 Testing notification bell click event...');
-                
                 // Initialize notifications
                 loadNotifications();
                 
                 // Update notifications every 30 seconds
                 setInterval(loadNotifications, 30000);
                 
-                console.log('🎉 Notification system initialized successfully');
-                
                 // Add event listener for notification bell
                 bell.addEventListener('click', function(e) {
-                    console.log('🔔 Bell clicked via addEventListener');
                     e.preventDefault();
                     e.stopPropagation();
                     toggleNotifications(e);
                 });
-                
-                // Test click functionality
-                console.log('🔔 Event listener added successfully');
-                
-                // Test click event manually
-                console.log('🧪 Testing click event manually...');
-                const testEvent = new Event('click', { bubbles: true, cancelable: true });
-                console.log('🧪 Test event created:', testEvent);
-                
-                // Verify event listener is working
-                console.log('🧪 Bell element properties:');
-                console.log('  - ID:', bell.id);
-                console.log('  - Class:', bell.className);
-                console.log('  - onclick:', bell.onclick);
-                console.log('  - Event listeners attached');
-                
-            } else {
-                console.error('❌ Some notification elements are missing!');
-                console.error('Missing elements:');
-                if (!bell) console.error('  - notificationBell');
-                if (!dropdown) console.error('  - notificationDropdown');
-                if (!count) console.error('  - notificationCount');
             }
         });
     </script>

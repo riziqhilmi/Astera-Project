@@ -208,12 +208,17 @@
     </div>
             <div class="flex items-center gap-2 flex-shrink-0">
                 <!-- Notification Bell -->
-                <div class="relative">
-                    <button id="notificationBell" class="p-1 rounded-full hover:bg-gray-200 transition-colors focus:outline-none">
-                        <i class="far fa-bell text-gray-500 text-sm"></i>
-                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
-                    </button>
-                </div>
+<div class="relative">
+    <button id="notificationBell" class="p-1 rounded-full hover:bg-gray-200 transition-colors focus:outline-none">
+        <i class="far fa-bell text-gray-500 text-sm"></i>
+        <span id="notificationCount" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+            3
+        </span>
+    </button>
+</div>
+
+
+
                 <!-- Logout -->
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
@@ -243,7 +248,65 @@
                 <div class="flex items-center space-x-4">
                 </div>
             </div>
-            
+
+            <!-- Notification Panel (Slide-in dari kiri) -->
+<div id="notificationModal" class="hidden fixed inset-0 z-50 flex justify-start">
+    <!-- Background overlay -->
+    <div id="overlay" class="absolute inset-0 bg-black bg-opacity-30"></div>
+
+    <!-- Panel Notifikasi -->
+    <div class="relative bg-white w-[400px] h-full shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out" id="notificationPanel">
+        <!-- Header -->
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 bg-gray-50">
+            <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                <i class="far fa-bell text-blue-500"></i> Notifikasi
+            </h2>
+            <button id="closeNotification" class="text-gray-500 hover:text-gray-700 transition">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Konten Notifikasi -->
+        <div class="overflow-y-auto h-[calc(100%-120px)] divide-y divide-gray-100">
+            <!-- Data Dummy -->
+            <div class="p-4 hover:bg-gray-50 cursor-pointer transition">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-box text-green-500 text-xl mt-1"></i>
+                    <div>
+                        <div class="font-medium text-gray-800">Barang Masuk Baru</div>
+                        <div class="text-sm text-gray-500">Barang <span class="font-semibold">'Laptop Asus'</span> telah masuk (5 unit)</div>
+                        <div class="text-xs text-gray-400">5 menit yang lalu</div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 hover:bg-gray-50 cursor-pointer transition">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-exclamation-triangle text-yellow-500 text-xl mt-1"></i>
+                    <div>
+                        <div class="font-medium text-gray-800">Stok Hampir Habis</div>
+                        <div class="text-sm text-gray-500">Barang <span class="font-semibold">'Printer Canon'</span> tersisa 2 unit</div>
+                        <div class="text-xs text-gray-400">1 jam yang lalu</div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 hover:bg-gray-50 cursor-pointer transition">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-truck-loading text-blue-500 text-xl mt-1"></i>
+                    <div>
+                        <div class="font-medium text-gray-800">Barang Keluar</div>
+                        <div class="text-sm text-gray-500">Barang <span class="font-semibold">'Proyektor Epson'</span> keluar (1 unit)</div>
+                        <div class="text-xs text-gray-400">Kemarin</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-5 py-3 border-t border-gray-200 text-center">
+            <button class="text-blue-600 hover:underline font-medium">Lihat Semua</button>
+        </div>
+    </div>
+</div>
             <!-- Main Content Area -->
             <div class="main-container">
                 @yield('content')
@@ -252,6 +315,31 @@
     </div>
 
     <script>
+    const bell = document.getElementById('notificationBell');
+    const modal = document.getElementById('notificationModal');
+    const panel = document.getElementById('notificationPanel');
+    const overlay = document.getElementById('overlay');
+    const closeBtn = document.getElementById('closeNotification');
+
+    // Buka panel
+    bell.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            panel.classList.remove('-translate-x-full');
+        }, 10);
+    });
+
+    // Tutup panel
+    const closePanel = () => {
+        panel.classList.add('-translate-x-full');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    };
+
+    overlay.addEventListener('click', closePanel);
+    closeBtn.addEventListener('click', closePanel);
+
         // Sidebar functionality
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('main-content');
