@@ -8,6 +8,8 @@ use App\Http\Controllers\RuanganController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PemeliharaanController;
+use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -46,6 +48,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 });
 
+// Operasional Routes
 Route::prefix('operasional')->middleware(['auth', 'admin_or_user_operasional'])->group(function () {
     // Barang Masuk
     Route::get('/barang-masuk', [BarangMasukController::class, 'index'])->name('barang_masuk.index');
@@ -56,6 +59,21 @@ Route::prefix('operasional')->middleware(['auth', 'admin_or_user_operasional'])-
     Route::get('/barang-keluar', [BarangKeluarController::class, 'index'])->name('barang_keluar.index');
     Route::post('/barang-keluar', [BarangKeluarController::class, 'store'])->name('barang_keluar.store');
     Route::delete('/barang-keluar/{id}', [BarangKeluarController::class, 'destroy'])->name('barang_keluar.destroy');
+    
+    // Pemeliharaan
+    Route::get('/pemeliharaan', [PemeliharaanController::class, 'index'])->name('pemeliharaan.index');
+    Route::get('/pemeliharaan/create', [PemeliharaanController::class, 'create'])->name('pemeliharaan.create');
+    Route::post('/pemeliharaan', [PemeliharaanController::class, 'store'])->name('pemeliharaan.store');
+    Route::get('/pemeliharaan/{pemeliharaan}/edit', [PemeliharaanController::class, 'edit'])->name('pemeliharaan.edit');
+    Route::put('/pemeliharaan/{pemeliharaan}', [PemeliharaanController::class, 'update'])->name('pemeliharaan.update');
+    Route::delete('/pemeliharaan/{pemeliharaan}', [PemeliharaanController::class, 'destroy'])->name('pemeliharaan.destroy');
+    
+    // Peminjaman
+    Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
+    Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])->name('peminjaman.create');
+    Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
+    Route::post('/peminjaman/{id}/kembali', [PeminjamanController::class, 'kembali'])->name('peminjaman.kembali');
+    Route::delete('/peminjaman/{peminjaman}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
 });
 
 require __DIR__.'/auth.php';

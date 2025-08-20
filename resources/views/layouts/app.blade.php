@@ -176,6 +176,12 @@
             <a href="{{ route('barang_keluar.index') }}" class="sidebar-link text-sm {{ request()->routeIs('barang_keluar.*') ? 'active' : '' }}">
                 <i class="fas fa-arrow-up"></i> Barang Keluar
             </a>
+            <a href="{{ route('pemeliharaan.index') }}" class="sidebar-link text-sm {{ request()->routeIs('pemeliharaan.*') ? 'active' : '' }}">
+            <i class="fas fa-tools"></i> Pemeliharaan
+        </a>
+        <a href="{{ route('peminjaman.index') }}" class="sidebar-link text-sm {{ request()->routeIs('peminjaman.*') ? 'active' : '' }}">
+            <i class="fas fa-hand-holding"></i> Peminjaman
+        </a>
         </div>
     </div>
     @endif
