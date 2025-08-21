@@ -175,7 +175,7 @@
                 alert('Jumlah barang pinjam melebihi stok yang tersedia!');
             }
         }
-    });
+    }
     
     // Datepicker default to today
     document.addEventListener('DOMContentLoaded', function() {
@@ -200,7 +200,10 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pinjam</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <!-- Hanya admin yang bisa melihat kolom aksi -->
+            @if(auth()->user()->role === 'admin')
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+            @endif
         </tr>
     </thead>
     <tbody class="bg-white divide-y divide-gray-200">
@@ -227,6 +230,8 @@
                     {{ ucfirst($item->status) }}
                 </span>
             </td>
+            <!-- Hanya admin yang bisa melihat tombol aksi -->
+            @if(auth()->user()->role === 'admin')
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
                     @if($item->status == 'dipinjam')
@@ -237,15 +242,10 @@
                         </button>
                     </form>
                     @endif
-                    <form action="{{ route('peminjaman.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-500 hover:text-red-700">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </form>
+                    <!-- Tombol hapus dihilangkan -->
                 </div>
             </td>
+            @endif
         </tr>
         @empty
         <tr>
