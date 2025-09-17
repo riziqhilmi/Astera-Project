@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('peminjam');
             $table->date('tanggal_pinjam');
             $table->date('tanggal_kembali')->nullable();
+            $table->date('batas_waktu')->nullable();
             $table->integer('jumlah');
             $table->text('keperluan');
             $table->enum('status', ['dipinjam', 'dikembalikan', 'terlambat'])->default('dipinjam');

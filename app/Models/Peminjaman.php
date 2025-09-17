@@ -9,11 +9,14 @@ class Peminjaman extends Model
 {
     use HasFactory;
 
+    protected $table = 'peminjaman';
+
     protected $fillable = [
         'barang_id',
         'peminjam',
         'tanggal_pinjam',
         'tanggal_kembali',
+        'batas_waktu',
         'jumlah',
         'keperluan',
         'status',
@@ -23,6 +26,7 @@ class Peminjaman extends Model
     protected $casts = [
         'tanggal_pinjam' => 'date',
         'tanggal_kembali' => 'date',
+        'batas_waktu' => 'date',
     ];
 
     public function barang()

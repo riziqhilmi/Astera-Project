@@ -459,7 +459,7 @@
                     
                     <!-- Operasional -->
                     <div class="mb-2">
-                        <button id="operasionalMenuButton" class="sidebar-link w-full text-left {{ request()->routeIs('barang_masuk.*', 'barang_keluar.*') ? 'active' : '' }}">
+                        <button id="operasionalMenuButton" class="sidebar-link w-full text-left {{ request()->routeIs('barang_keluar.*') ? 'active' : '' }}">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-3">
                                     <i class="fas fa-exchange-alt"></i>
@@ -469,10 +469,7 @@
                             </div>
                         </button>
                         
-                        <div id="operasionalSubMenu" class="{{ request()->routeIs('barang_masuk.*', 'barang_keluar.*') ? 'show' : '' }}">
-                            <a href="{{ route('barang_masuk.index') }}" class="sidebar-link text-sm {{ request()->routeIs('barang_masuk.*') ? 'active' : '' }}">
-                                <i class="fas fa-arrow-down"></i> Barang Masuk
-                            </a>
+                        <div id="operasionalSubMenu" class="{{ request()->routeIs('barang_keluar.*') ? 'show' : '' }}">
                             <a href="{{ route('barang_keluar.index') }}" class="sidebar-link text-sm {{ request()->routeIs('barang_keluar.*') ? 'active' : '' }}">
                                 <i class="fas fa-arrow-up"></i> Barang Keluar
                             </a>

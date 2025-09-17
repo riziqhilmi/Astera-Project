@@ -49,6 +49,7 @@ class PeminjamanController extends Controller
             'barang_id' => 'required|exists:barangs,id',
             'peminjam' => 'required',
             'tanggal_pinjam' => 'required|date',
+            'batas_waktu' => 'nullable|date|after_or_equal:tanggal_pinjam',
             'jumlah' => 'required|integer|min:1',
             'keperluan' => 'required',
             'penanggung_jawab' => 'required'

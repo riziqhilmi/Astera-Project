@@ -78,6 +78,21 @@
                 </div>
                 <p class="text-xs text-gray-500 mt-1">Tanggal peminjaman barang</p>
             </div>
+
+            <!-- Batas Waktu Pengembalian -->
+            <div class="space-y-1">
+                <label class="block text-sm font-medium text-gray-700">
+                    Batas Waktu Pengembalian
+                </label>
+                <div class="relative">
+                    <input type="date" name="batas_waktu" value="{{ old('batas_waktu') }}" 
+                           class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 transition-all duration-200 shadow-sm">
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <i class="fas fa-calendar text-gray-400"></i>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-1">Opsional: batas akhir pengembalian</p>
+            </div>
             
             <!-- Penanggung Jawab -->
             <div class="space-y-1">
@@ -200,6 +215,7 @@
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Pinjam</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batas Waktu</th>
             <!-- Hanya admin yang bisa melihat kolom aksi -->
             @if(auth()->user()->role === 'admin')
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
@@ -229,6 +245,9 @@
                     @else bg-blue-100 text-blue-800 @endif">
                     {{ ucfirst($item->status) }}
                 </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ $item->batas_waktu ? \Carbon\Carbon::parse($item->batas_waktu)->format('d M Y') : '-' }}
             </td>
             <!-- Hanya admin yang bisa melihat tombol aksi -->
             @if(auth()->user()->role === 'admin')
