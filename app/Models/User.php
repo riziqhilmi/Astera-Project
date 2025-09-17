@@ -58,4 +58,14 @@ class User extends Authenticatable
     {
         return $this->notifications()->unread();
     }
+
+    public function getRoleDisplayAttribute()
+    {
+    return match($this->role) {
+        'admin' => 'Admin',
+        'user' => 'User (Input)',
+        'user_operasional' => 'User (Operasional)',
+        default => 'User'
+    };
+    }
 }

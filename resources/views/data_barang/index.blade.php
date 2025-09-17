@@ -12,19 +12,19 @@
     </div>
 
     <form method="GET" action="{{ route('data_barang.index') }}" class="mb-4">
-    <div class="flex gap-2">
-        <input 
-            type="text" 
-            name="search" 
-            value="{{ request('search') }}" 
-            placeholder="Cari barang" 
-            class="border rounded px-3 py-2 w-full"
-        >
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
-            Cari
-        </button>
-    </div>
-</form>
+        <div class="flex gap-2">
+            <input 
+                type="text" 
+                name="search" 
+                value="{{ request('search') }}" 
+                placeholder="Cari barang atau nomor seri" 
+                class="border rounded px-3 py-2 w-full"
+            >
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+                Cari
+            </button>
+        </div>
+    </form>
 
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white">
@@ -32,18 +32,20 @@
                 <tr class="bg-gray-100 text-gray-800">
                     <th class="py-3 px-4 text-left">No</th>
                     <th class="py-3 px-4 text-left">Foto</th>
+                    <th class="py-3 px-4 text-left">Nomor Seri</th>
                     <th class="py-3 px-4 text-left">Nama Barang</th>
                     <th class="py-3 px-4 text-left">Total</th>
                     <th class="py-3 px-4 text-left">Ruangan</th>
                     <th class="py-3 px-4 text-left">Kategori</th>
+                    <th class="py-3 px-4 text-left">Tgl Input</th>
                     <th class="py-3 px-4 text-left">Kondisi</th>
                     <th class="py-3 px-4 text-left">Status</th>
+                    @if(auth()->user()->role === 'admin')
                     <th class="py-3 px-4 text-left">Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-            
-
                 @foreach($barang as $item)
                 <tr>
                     <td class="py-3 px-4">{{ $loop->iteration }}</td>
@@ -56,10 +58,12 @@
                             </div>
                         @endif
                     </td>
+                    <td class="py-3 px-4">{{ $item->nomor_seri ?? '-' }}</td>
                     <td class="py-3 px-4">{{ $item->nama }}</td>
                     <td class="py-3 px-4">{{ $item->total }}</td>
                     <td class="py-3 px-4">{{ $item->ruangan->nama }}</td>
                     <td class="py-3 px-4">{{ $item->kategori }}</td>
+                    <td class="py-3 px-4">{{ $item->tanggal_pembelian }}</td>
                     <td class="py-3 px-4">
                         <span class="px-2 py-1 rounded-full text-xs 
                             @if($item->kondisi == 'baik') bg-green-100 text-green-800
@@ -76,6 +80,7 @@
                             {{ ucfirst($item->status) }}
                         </span>
                     </td>
+                    @if(auth()->user()->role === 'admin')
                     <td class="py-3 px-4 flex space-x-2">
                         <a href="{{ route('data_barang.edit', $item->id) }}" class="text-yellow-500 hover:text-yellow-700">
                             <i class="fas fa-edit"></i>
@@ -88,6 +93,7 @@
                             </button>
                         </form>
                     </td>
+                    @endif
                 </tr>
                 @endforeach
             </tbody>

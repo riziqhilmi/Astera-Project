@@ -23,7 +23,8 @@ class BarangController extends Controller
         $query->where(function ($q) use ($search) {
             $q->where('nama', 'like', '%' . $search . '%')
               ->orWhere('id', 'like', '%' . $search . '%')
-              ->orWhere('kategori', 'like', '%' . $search . '%');
+              ->orWhere('kategori', 'like', '%' . $search . '%')
+              ->orWhere('nomor_seri', 'like', '%' . $search . '%'); // Ditambahkan
         });
     }
 
@@ -41,27 +42,28 @@ class BarangController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'id_ruangan' => 'required|exists:ruangans,id',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'nama' => 'required',
-            'total' => 'required|integer|min:0',
-            'kategori' => 'required',
-            'tanggal_pembelian' => 'required|date',
-            'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
-            'status' => 'required|in:tersedia,dipinjam,perbaikan'
-        ]);
+{
+    $request->validate([
+        'id_ruangan' => 'required|exists:ruangans,id',
+        'nomor_seri' => 'nullable|string|unique:barangs,nomor_seri', // Validasi unik
+        'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'nama' => 'required',
+        'total' => 'required|integer|min:0',
+        'kategori' => 'required',
+        'tanggal_pembelian' => 'required|date',
+        'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
+        'status' => 'required|in:tersedia,dipinjam,perbaikan'
+    ]);
 
-        $data = $request->except('foto');
-        
-        if ($request->hasFile('foto')) {
-            $data['foto'] = $request->file('foto')->store('barang', 'public');
-        }
-
-        Barang::create($data);
-        return redirect()->route('data_barang.index')->with('success', 'Barang berhasil ditambahkan');
+    $data = $request->except('foto');
+    
+    if ($request->hasFile('foto')) {
+        $data['foto'] = $request->file('foto')->store('barang', 'public');
     }
+
+    Barang::create($data);
+    return redirect()->route('data_barang.index')->with('success', 'Barang berhasil ditambahkan');
+}
 
     public function edit(Barang $data_barang)
     {
@@ -70,31 +72,32 @@ class BarangController extends Controller
     }
 
     public function update(Request $request, Barang $data_barang)
-    {
-        $request->validate([
-            'id_ruangan' => 'required|exists:ruangans,id',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'nama' => 'required',
-            'total' => 'required|integer|min:0',
-            'kategori' => 'required',
-            'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
-            'tanggal_pembelian' => 'required|date',
-            'status' => 'required|in:tersedia,dipinjam,perbaikan'
-        ]);
+{
+    $request->validate([
+        'id_ruangan' => 'required|exists:ruangans,id',
+        'nomor_seri' => 'nullable|string|unique:barangs,nomor_seri,' . $data_barang->id, // Validasi unik dengan pengecualian
+        'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'nama' => 'required',
+        'total' => 'required|integer|min:0',
+        'kategori' => 'required',
+        'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat',
+        'tanggal_pembelian' => 'required|date',
+        'status' => 'required|in:tersedia,dipinjam,perbaikan'
+    ]);
 
-        $data = $request->except('foto');
-        
-        if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
-            if ($data_barang->foto) {
-                Storage::disk('public')->delete($data_barang->foto);
-            }
-            $data['foto'] = $request->file('foto')->store('barang', 'public');
+    $data = $request->except('foto');
+    
+    if ($request->hasFile('foto')) {
+        // Hapus foto lama jika ada
+        if ($data_barang->foto) {
+            Storage::disk('public')->delete($data_barang->foto);
         }
-
-        $data_barang->update($data);
-        return redirect()->route('data_barang.index')->with('success', 'Barang berhasil diupdate');
+        $data['foto'] = $request->file('foto')->store('barang', 'public');
     }
+
+    $data_barang->update($data);
+    return redirect()->route('data_barang.index')->with('success', 'Barang berhasil diupdate');
+}
 
     public function destroy(Barang $data_barang)
     {

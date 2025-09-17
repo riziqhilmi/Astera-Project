@@ -25,6 +25,14 @@
                 </select>
             </div>
 
+            <!-- Nomor Seri -->
+            <div class="space-y-1">
+                <label class="block text-sm font-medium text-gray-700">Nomor Seri</label>
+                <input type="text" name="nomor_seri" value="{{ old('nomor_seri') }}"
+                       class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm"
+                       placeholder="Masukkan nomor seri (opsional)">
+            </div>
+
             <!-- Foto Barang -->
             <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700">Foto Barang</label>
@@ -73,7 +81,7 @@
                 </select>
             </div>
 
-                        <!-- Status -->
+            <!-- Status -->
             <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700">Status</label>
                  <select name="status" id="status" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm">
@@ -82,15 +90,16 @@
                     <option value="perbaikan">Perbaikan</option>
                 </select>
             </div>
-<!-- Tanggal Pembelian -->
-<div class="space-y-1">
-    <label for="tanggal_pembelian" class="block text-sm font-medium text-gray-700">
-        <span class="text-red-500">*</span> Tanggal Pembelian
-    </label>
-    <input type="text" name="tanggal_pembelian" id="tanggal_pembelian"
-           value="{{ old('tanggal_pembelian', date('Y-m-d')) }}" 
-           class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" required>
-</div>
+
+            <!-- Tanggal Pembelian -->
+            <div class="space-y-1">
+                <label for="tanggal_pembelian" class="block text-sm font-medium text-gray-700">
+                    <span class="text-red-500">*</span> Tanggal Input
+                </label>
+                <input type="text" name="tanggal_pembelian" id="tanggal_pembelian"
+                       value="{{ old('tanggal_pembelian', date('Y-m-d')) }}" 
+                       class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" required>
+            </div>
 
         </div>
             <div class="pt-4 flex justify-end space-x-3 border-t border-gray-100">

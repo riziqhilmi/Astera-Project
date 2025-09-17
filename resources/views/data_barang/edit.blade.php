@@ -22,6 +22,14 @@
             </div>
             
             <div>
+                <label for="nomor_seri" class="block text-gray-700 mb-2">Nomor Seri</label>
+                <input type="text" name="nomor_seri" id="nomor_seri" 
+                       value="{{ old('nomor_seri', $data_barang->nomor_seri) }}" 
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="Masukkan nomor seri (opsional)">
+            </div>
+            
+            <div>
                 <label for="foto" class="block text-gray-700 mb-2">Foto Barang</label>
                 <input type="file" name="foto" id="foto" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 
@@ -40,22 +48,21 @@
             </div>
             
             <div>
-    <label for="total" class="block text-gray-700 mb-2">Total</label>
-    <input type="number" name="total" id="total" min="0"
-           value="{{ old('total', $data_barang->total) }}" 
-           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-</div>
+                <label for="total" class="block text-gray-700 mb-2">Total</label>
+                <input type="number" name="total" id="total" min="0"
+                       value="{{ old('total', $data_barang->total) }}" 
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
 
-<div>
-    <label for="kategori" class="block text-gray-700 mb-2">Kategori</label>
-    <select name="kategori" id="kategori" 
-        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-        <option value="Elektronik" {{ old('kategori', $data_barang->kategori) == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
-        <option value="Furniture" {{ old('kategori', $data_barang->kategori) == 'Furniture' ? 'selected' : '' }}>Furniture</option>
-        <option value="ATK" {{ old('kategori', $data_barang->kategori) == 'ATK' ? 'selected' : '' }}>ATK</option>
-    </select>
-</div>
-
+            <div>
+                <label for="kategori" class="block text-gray-700 mb-2">Kategori</label>
+                <select name="kategori" id="kategori" 
+                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    <option value="Elektronik" {{ old('kategori', $data_barang->kategori) == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
+                    <option value="Furniture" {{ old('kategori', $data_barang->kategori) == 'Furniture' ? 'selected' : '' }}>Furniture</option>
+                    <option value="ATK" {{ old('kategori', $data_barang->kategori) == 'ATK' ? 'selected' : '' }}>ATK</option>
+                </select>
+            </div>
             
             <div>
                 <label for="kondisi" class="block text-gray-700 mb-2">Kondisi</label>
@@ -76,7 +83,7 @@
             </div>
             
             <div>
-                <label for="tanggal_pembelian" class="block text-gray-700 mb-2">Tanggal Pembelian</label>
+                <label for="tanggal_pembelian" class="block text-gray-700 mb-2">Tanggal Input</label>
                 <input type="date" name="tanggal_pembelian" id="tanggal_pembelian" 
                        value="{{ old('tanggal_pembelian', $data_barang->tanggal_pembelian->format('Y-m-d')) }}" 
                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>

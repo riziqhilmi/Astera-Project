@@ -188,9 +188,9 @@
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
-                    <!-- <a href="{{ route('pemeliharaan.edit', $item->id) }}" class="text-yellow-500 hover:text-yellow-700">
+                    <a href="{{ route('pemeliharaan.edit', $item->id) }}" class="text-yellow-500 hover:text-yellow-700">
                         <i class="fas fa-edit"></i>
-                    </a> -->
+                    </a>
                     <form action="{{ route('pemeliharaan.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                         @csrf
                         @method('DELETE')
