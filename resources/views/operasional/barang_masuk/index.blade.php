@@ -13,7 +13,7 @@
         @csrf
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Barang -->
+            <!-- Barang --> 
             <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700">
                     <span class="text-red-500">*</span> Barang
