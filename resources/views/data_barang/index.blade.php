@@ -6,9 +6,11 @@
 <div class="bg-white rounded-lg shadow-sm p-6">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-semibold text-gray-800">Data Barang</h2>
+        @if(auth()->user()->role === 'admin')
         <a href="{{ route('data_barang.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
             Tambah Barang
         </a>
+        @endif
     </div>
 
     <form method="GET" action="{{ route('data_barang.index') }}" class="mb-4">

@@ -6,10 +6,11 @@
 <div class="bg-white rounded-lg shadow-sm p-6">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-semibold text-gray-800">Data Ruangan</h2>
-        <!-- Tombol Tambah Ruangan tetap ada untuk semua pengguna -->
+        @if(auth()->user()->role === 'admin')
         <a href="{{ route('data_ruangan.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
             Tambah Ruangan
         </a>
+        @endif
     </div>
 
     <form method="GET" action="{{ route('data_ruangan.index') }}" class="mb-4">

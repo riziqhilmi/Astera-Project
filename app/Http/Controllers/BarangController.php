@@ -107,4 +107,10 @@ class BarangController extends Controller
         $data_barang->delete();
         return redirect()->route('data_barang.index')->with('success', 'Barang berhasil dihapus');
     }
+
+    // Read-only detail view
+    public function show(Barang $data_barang)
+    {
+        return view('data_barang.show', ['data_barang' => $data_barang]);
+    }
 }
