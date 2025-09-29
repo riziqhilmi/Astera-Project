@@ -1,4 +1,3 @@
-<!-- create.blade.php -->
 @extends('layouts.app')
 
 @section('content')
@@ -25,12 +24,14 @@
                 </select>
             </div>
 
-            <!-- Nomor Seri -->
+            <!-- Nomor Seri (Read-only, akan di-generate otomatis) -->
             <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700">Nomor Seri</label>
-                <input type="text" name="nomor_seri" value="{{ old('nomor_seri') }}"
-                       class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm"
-                       placeholder="Masukkan nomor seri (opsional)">
+                <input type="text" id="nomor_seri_preview" readonly
+                       class="w-full rounded-lg border-gray-300 bg-gray-100 text-sm py-2.5 px-4 shadow-sm"
+                       placeholder="Nomor seri akan tergenerate otomatis">
+                <input type="hidden" name="nomor_seri" id="nomor_seri_hidden">
+                <p class="text-xs text-gray-500 mt-1">Nomor seri akan tergenerate otomatis berdasarkan kategori</p>
             </div>
 
             <!-- Foto Barang -->
@@ -59,11 +60,14 @@
 
             <!-- Kategori -->
             <div class="space-y-1">
-                <label class="block text-sm font-medium text-gray-700">Kategori</label>
-                <select name="kategori" id="kategori" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                <option value="Elektronik">Elektronik</option>
-                <option value="Furniture">Furniture</option>
-                <option value="ATK">ATK</option>
+                <label class="block text-sm font-medium text-gray-700">
+                    <span class="text-red-500">*</span> Kategori
+                </label>
+                <select name="kategori" id="kategori" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="updateNomorSeriPreview()">
+                    <option value="">Pilih Kategori</option>
+                    <option value="Elektronik">Elektronik</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="ATK">ATK</option>
                 </select>
             </div>
             
@@ -96,7 +100,7 @@
                 <label for="tanggal_pembelian" class="block text-sm font-medium text-gray-700">
                     <span class="text-red-500">*</span> Tanggal Input
                 </label>
-                <input type="text" name="tanggal_pembelian" id="tanggal_pembelian"
+                <input type="date" name="tanggal_pembelian" id="tanggal_pembelian"
                        value="{{ old('tanggal_pembelian', date('Y-m-d')) }}" 
                        class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" required>
             </div>
@@ -125,13 +129,42 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
     <script>
-flatpickr("#tanggal_pembelian", {
-    dateFormat: "Y-m-d", // format untuk database
-    altInput: true,
-    altFormat: "j F Y", // format untuk user (bulan lengkap)
-    locale: "id",
-    defaultDate: "{{ old('tanggal_pembelian', date('Y-m-d')) }}",
-    maxDate: "today" // hanya bisa pilih sampai hari ini
-});
-</script>
+        flatpickr("#tanggal_pembelian", {
+            dateFormat: "Y-m-d", // format untuk database
+            altInput: true,
+            altFormat: "j F Y", // format untuk user (bulan lengkap)
+            locale: "id",
+            defaultDate: "{{ old('tanggal_pembelian', date('Y-m-d')) }}",
+            maxDate: "today" // hanya bisa pilih sampai hari ini
+        });
+        
+        // Fungsi untuk menampilkan preview nomor seri
+        function updateNomorSeriPreview() {
+            const kategoriSelect = document.getElementById('kategori');
+            const nomorSeriPreview = document.getElementById('nomor_seri_preview');
+            const nomorSeriHidden = document.getElementById('nomor_seri_hidden');
+            
+            if (kategoriSelect.value) {
+                // Mapping kategori ke kode
+                const kodeMapping = {
+                    'Elektronik': 'ELT',
+                    'Furniture': 'FTR',
+                    'ATK': 'ATK'
+                };
+                
+                const kode = kodeMapping[kategoriSelect.value] || 'BRG';
+                // Nomor akan digenerate di server, kita hanya preview formatnya
+                nomorSeriPreview.value = kode + '00001 (akan tergenerate otomatis)';
+                nomorSeriHidden.value = 'AUTO'; // Tanda untuk server bahwa nomor seri harus digenerate
+            } else {
+                nomorSeriPreview.value = '';
+                nomorSeriHidden.value = '';
+            }
+        }
+        
+        // Panggil fungsi saat halaman dimuat jika ada nilai sebelumnya
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNomorSeriPreview();
+        });
+    </script>
 @endpush
