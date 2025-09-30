@@ -1,6 +1,5 @@
 <?php
 
-// app/Http/Controllers/BarangController.php
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
@@ -14,6 +13,7 @@ class BarangController extends Controller
     {
         // Simpan keyword pencarian untuk dikirim ke view
         $search = $request->input('search');
+        $kategori = $request->input('kategori'); // Filter kategori
 
         // Mulai query barang dengan relasi 'ruangan'
         $query = Barang::with('ruangan');
@@ -24,21 +24,30 @@ class BarangController extends Controller
                 $q->where('nama', 'like', '%' . $search . '%')
                   ->orWhere('id', 'like', '%' . $search . '%')
                   ->orWhere('kategori', 'like', '%' . $search . '%')
-                  ->orWhere('nomor_seri', 'like', '%' . $search . '%'); // Ditambahkan
+                  ->orWhere('nomor_seri', 'like', '%' . $search . '%');
             });
+        }
+
+        // Filter berdasarkan kategori jika dipilih
+        if ($request->filled('kategori') && $request->kategori != 'semua') {
+            $query->where('kategori', $request->kategori);
         }
 
         // Ambil data hasil pencarian atau semua barang
         $barang = $query->get();
 
-        // Kirim data + search ke view
-        return view('data_barang.index', compact('barang', 'search'));
+        // Daftar kategori untuk dropdown filter
+        $kategoriList = $this->getKategoriList();
+
+        // Kirim data + search + kategori ke view
+        return view('data_barang.index', compact('barang', 'search', 'kategori', 'kategoriList'));
     }
 
     public function create()
     {
         $ruangan = Ruangan::all();
-        return view('data_barang.create', compact('ruangan'));
+        $kategoriList = $this->getKategoriList();
+        return view('data_barang.create', compact('ruangan', 'kategoriList'));
     }
 
     public function store(Request $request)
@@ -70,14 +79,15 @@ class BarangController extends Controller
     public function edit(Barang $data_barang)
     {
         $ruangan = Ruangan::all();
-        return view('data_barang.edit', compact('data_barang', 'ruangan'));
+        $kategoriList = $this->getKategoriList();
+        return view('data_barang.edit', compact('data_barang', 'ruangan', 'kategoriList'));
     }
 
     public function update(Request $request, Barang $data_barang)
     {
         $request->validate([
             'id_ruangan' => 'required|exists:ruangans,id',
-            'nomor_seri' => 'nullable|string|unique:barangs,nomor_seri,' . $data_barang->id, // Validasi unik dengan pengecualian
+            'nomor_seri' => 'nullable|string|unique:barangs,nomor_seri,' . $data_barang->id,
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'nama' => 'required',
             'total' => 'required|integer|min:0',
@@ -117,6 +127,11 @@ class BarangController extends Controller
     {
         // Mapping kategori ke kode
         $kodeKategori = [
+            'Router & Switch' => 'RTW',
+            'Access Point' => 'ACP',
+            'Network Cable' => 'CBL',
+            'Network Tool' => 'NTL',
+            'Server' => 'SVR',
             'Elektronik' => 'ELT',
             'Furniture' => 'FTR',
             'ATK' => 'ATK'
@@ -140,5 +155,28 @@ class BarangController extends Controller
         
         // Format nomor dengan leading zeros
         return $kode . str_pad($newNumber, 5, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Daftar kategori barang
+     */
+    private function getKategoriList()
+    {
+        return [
+            'Router & Switch' => 'Router & Switch',
+            'Access Point' => 'Access Point',
+            'Network Cable' => 'Network Cable',
+            'Network Tool' => 'Network Tool',
+            'Server' => 'Server',
+            'Elektronik' => 'Elektronik',
+            'Furniture' => 'Furniture',
+            'ATK' => 'ATK'
+        ];
+    }
+
+    // Read-only detail view
+    public function show(Barang $data_barang)
+    {
+        return view('data_barang.show', ['data_barang' => $data_barang]);
     }
 }

@@ -19,9 +19,14 @@
                         class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" required>
                     <option value="">Pilih Ruangan</option>
                     @foreach($ruangan as $item)
-                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                        <option value="{{ $item->id }}" {{ old('id_ruangan') == $item->id ? 'selected' : '' }}>
+                            {{ $item->nama }}
+                        </option>
                     @endforeach
                 </select>
+                @error('id_ruangan')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Nomor Seri (Read-only, akan di-generate otomatis) -->
@@ -38,7 +43,12 @@
             <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700">Foto Barang</label>
                 <input type="file" name="foto" id="foto" 
+                       accept="image/jpeg,image/png,image/jpg"
                        class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm">
+                <p class="text-xs text-gray-500 mt-1">Format: JPEG, PNG, JPG (Maks. 2MB)</p>
+                @error('foto')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Nama Barang -->
@@ -46,16 +56,25 @@
                 <label class="block text-sm font-medium text-gray-700">
                     <span class="text-red-500">*</span> Nama Barang
                 </label>
-                <input type="text" name="nama" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" required>
+                <input type="text" name="nama" value="{{ old('nama') }}"
+                       class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" 
+                       placeholder="Masukkan nama barang" required>
+                @error('nama')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Total -->
             <div class="space-y-1">
                 <label class="block text-sm font-medium text-gray-700">
-                    <span class="text-red-500">*</span> Total
+                    <span class="text-red-500">*</span> Total Stok
                 </label>
-                <input type="number" name="total" min="1" value="{{ old('total') }}" 
-                       class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" required>
+                <input type="number" name="total" min="1" value="{{ old('total', 1) }}" 
+                       class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" 
+                       placeholder="Jumlah barang" required>
+                @error('total')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Kategori -->
@@ -63,12 +82,26 @@
                 <label class="block text-sm font-medium text-gray-700">
                     <span class="text-red-500">*</span> Kategori
                 </label>
-                <select name="kategori" id="kategori" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required onchange="updateNomorSeriPreview()">
+                <select name="kategori" id="kategori" 
+                        class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" 
+                        required onchange="updateNomorSeriPreview()">
                     <option value="">Pilih Kategori</option>
-                    <option value="Elektronik">Elektronik</option>
-                    <option value="Furniture">Furniture</option>
-                    <option value="ATK">ATK</option>
+                    <optgroup label="Jaringan Komputer">
+                        <option value="Router & Switch" {{ old('kategori') == 'Router & Switch' ? 'selected' : '' }}>Router & Switch</option>
+                        <option value="Access Point" {{ old('kategori') == 'Access Point' ? 'selected' : '' }}>Access Point</option>
+                        <option value="Network Cable" {{ old('kategori') == 'Network Cable' ? 'selected' : '' }}>Network Cable</option>
+                        <option value="Network Tool" {{ old('kategori') == 'Network Tool' ? 'selected' : '' }}>Network Tool</option>
+                        <option value="Server" {{ old('kategori') == 'Server' ? 'selected' : '' }}>Server</option>
+                    </optgroup>
+                    <optgroup label="Kategori Lainnya">
+                        <option value="Elektronik" {{ old('kategori') == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
+                        <option value="Furniture" {{ old('kategori') == 'Furniture' ? 'selected' : '' }}>Furniture</option>
+                        <option value="ATK" {{ old('kategori') == 'ATK' ? 'selected' : '' }}>ATK (Alat Tulis Kantor)</option>
+                    </optgroup>
                 </select>
+                @error('kategori')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
             
             <!-- Kondisi -->
@@ -79,46 +112,75 @@
                 <select name="kondisi" 
                         class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" required>
                     <option value="">Pilih Kondisi</option>
-                     <option value="baik">Baik</option>
-                    <option value="rusak_ringan">Rusak Ringan</option>
-                    <option value="rusak_berat">Rusak Berat</option>
+                    <option value="baik" {{ old('kondisi') == 'baik' ? 'selected' : '' }}>Baik</option>
+                    <option value="rusak_ringan" {{ old('kondisi') == 'rusak_ringan' ? 'selected' : '' }}>Rusak Ringan</option>
+                    <option value="rusak_berat" {{ old('kondisi') == 'rusak_berat' ? 'selected' : '' }}>Rusak Berat</option>
                 </select>
+                @error('kondisi')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Status -->
             <div class="space-y-1">
-                <label class="block text-sm font-medium text-gray-700">Status</label>
-                 <select name="status" id="status" class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm">
-                    <option value="tersedia">Tersedia</option>
-                    <option value="dipinjam">Dipinjam</option>
-                    <option value="perbaikan">Perbaikan</option>
+                <label class="block text-sm font-medium text-gray-700">
+                    <span class="text-red-500">*</span> Status
+                </label>
+                <select name="status" id="status" 
+                        class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" required>
+                    <option value="tersedia" {{ old('status') == 'tersedia' ? 'selected' : '' }}>Tersedia</option>
+                    <option value="dipinjam" {{ old('status') == 'dipinjam' ? 'selected' : '' }}>Dipinjam</option>
+                    <option value="perbaikan" {{ old('status') == 'perbaikan' ? 'selected' : '' }}>Perbaikan</option>
                 </select>
+                @error('status')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Tanggal Pembelian -->
             <div class="space-y-1">
                 <label for="tanggal_pembelian" class="block text-sm font-medium text-gray-700">
-                    <span class="text-red-500">*</span> Tanggal Input
+                    <span class="text-red-500">*</span> Tanggal Pembelian
                 </label>
                 <input type="date" name="tanggal_pembelian" id="tanggal_pembelian"
                        value="{{ old('tanggal_pembelian', date('Y-m-d')) }}" 
                        class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" required>
+                @error('tanggal_pembelian')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
         </div>
-            <div class="pt-4 flex justify-end space-x-3 border-t border-gray-100">
+
+        <!-- Deskripsi Tambahan untuk Kategori Jaringan -->
+        <div id="deskripsi_jaringan" class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg hidden">
+            <h4 class="font-medium text-blue-800 mb-2 flex items-center">
+                <i class="fas fa-network-wired mr-2"></i> Informasi Jaringan Komputer
+            </h4>
+            <p class="text-sm text-blue-700">
+                Untuk barang kategori jaringan komputer, pastikan informasi berikut sudah lengkap:
+            </p>
+            <ul class="text-sm text-blue-700 mt-2 list-disc list-inside">
+                <li>Nomor seri akan tergenerate otomatis dengan kode khusus jaringan</li>
+                <li>Pastikan spesifikasi teknis sudah tercatat dengan benar</li>
+                <li>Periksa kondisi konektivitas dan fungsionalitas perangkat</li>
+            </ul>
+        </div>
+
+        <div class="pt-4 flex justify-end space-x-3 border-t border-gray-100 mt-6">
             <a href="{{ route('data_barang.index') }}" 
-               class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
-                <i class="fas fa-times mr-2"></i> Batal
+               class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition duration-150">
+                <i class="fas fa-arrow-left mr-2"></i> Kembali
             </a>
             <button type="submit" 
-                    class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center">
-                <i class="fas fa-save mr-2"></i> Simpan Data
+                    class="px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center transition duration-150">
+                <i class="fas fa-save mr-2"></i> Simpan Barang
             </button>
         </div>
     </form>
 </div>
 @endsection
+
 @push('styles')
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -129,42 +191,116 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
     <script>
+        // Inisialisasi flatpickr
         flatpickr("#tanggal_pembelian", {
-            dateFormat: "Y-m-d", // format untuk database
+            dateFormat: "Y-m-d",
             altInput: true,
-            altFormat: "j F Y", // format untuk user (bulan lengkap)
+            altFormat: "j F Y",
             locale: "id",
             defaultDate: "{{ old('tanggal_pembelian', date('Y-m-d')) }}",
-            maxDate: "today" // hanya bisa pilih sampai hari ini
+            maxDate: "today"
         });
-        
+
+        // Mapping kategori ke kode
+        const kodeMapping = {
+            // Jaringan Komputer
+            'Router & Switch': 'RTW',
+            'Access Point': 'ACP',
+            'Network Cable': 'CBL',
+            'Network Tool': 'NTL',
+            'Server': 'SVR',
+            // Kategori Lainnya
+            'Elektronik': 'ELT',
+            'Furniture': 'FTR',
+            'ATK': 'ATK'
+        };
+
+        // Kategori jaringan untuk menampilkan info tambahan
+        const kategoriJaringan = [
+            'Router & Switch',
+            'Access Point', 
+            'Network Cable',
+            'Network Tool',
+            'Server'
+        ];
+
         // Fungsi untuk menampilkan preview nomor seri
         function updateNomorSeriPreview() {
             const kategoriSelect = document.getElementById('kategori');
             const nomorSeriPreview = document.getElementById('nomor_seri_preview');
             const nomorSeriHidden = document.getElementById('nomor_seri_hidden');
-            
+            const deskripsiJaringan = document.getElementById('deskripsi_jaringan');
+
             if (kategoriSelect.value) {
-                // Mapping kategori ke kode
-                const kodeMapping = {
-                    'Elektronik': 'ELT',
-                    'Furniture': 'FTR',
-                    'ATK': 'ATK'
-                };
-                
                 const kode = kodeMapping[kategoriSelect.value] || 'BRG';
-                // Nomor akan digenerate di server, kita hanya preview formatnya
-                nomorSeriPreview.value = kode + '00001 (akan tergenerate otomatis)';
-                nomorSeriHidden.value = 'AUTO'; // Tanda untuk server bahwa nomor seri harus digenerate
+                
+                // Tampilkan format preview
+                nomorSeriPreview.value = kode + 'XXXXX (akan tergenerate otomatis)';
+                nomorSeriHidden.value = 'AUTO';
+
+                // Tampilkan/sembunyikan deskripsi jaringan
+                if (kategoriJaringan.includes(kategoriSelect.value)) {
+                    deskripsiJaringan.classList.remove('hidden');
+                } else {
+                    deskripsiJaringan.classList.add('hidden');
+                }
+
+                // Tambahkan class styling untuk kategori jaringan
+                if (kategoriJaringan.includes(kategoriSelect.value)) {
+                    kategoriSelect.classList.add('border-blue-300', 'bg-blue-50');
+                } else {
+                    kategoriSelect.classList.remove('border-blue-300', 'bg-blue-50');
+                }
             } else {
                 nomorSeriPreview.value = '';
                 nomorSeriHidden.value = '';
+                deskripsiJaringan.classList.add('hidden');
+                kategoriSelect.classList.remove('border-blue-300', 'bg-blue-50');
             }
         }
-        
-        // Panggil fungsi saat halaman dimuat jika ada nilai sebelumnya
+
+        // Validasi form sebelum submit
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const kategori = document.getElementById('kategori').value;
+            const nama = document.getElementsByName('nama')[0].value;
+            
+            // Validasi tambahan untuk kategori jaringan
+            if (kategoriJaringan.includes(kategori)) {
+                // Cek apakah nama barang mengandung kata kunci jaringan
+                const kataKunciJaringan = ['router', 'switch', 'access point', 'server', 'kabel', 'network', 'jaringan'];
+                const namaLower = nama.toLowerCase();
+                const containsKeyword = kataKunciJaringan.some(keyword => 
+                    namaLower.includes(keyword)
+                );
+                
+                if (!containsKeyword) {
+                    if (!confirm('Barang dengan kategori jaringan sebaiknya memiliki nama yang relevan. Lanjutkan penyimpanan?')) {
+                        e.preventDefault();
+                        return;
+                    }
+                }
+            }
+        });
+
+        // Preview gambar sebelum upload
+        document.getElementById('foto').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Tampilkan preview gambar (opsional, bisa ditambahkan nanti)
+                    console.log('File selected:', file.name);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Panggil fungsi saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
             updateNomorSeriPreview();
+            
+            // Set focus ke field pertama
+            document.querySelector('input[name="nama"]').focus();
         });
     </script>
 @endpush

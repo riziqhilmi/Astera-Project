@@ -33,8 +33,30 @@ Route::middleware(['auth'])->group(function () {
     });
     
     Route::middleware(['admin_or_user'])->group(function () {
-        Route::resource('data_barang', BarangController::class);
-        Route::resource('data_ruangan', RuanganController::class);
+        // Read-only routes for non-admin (index & show)
+        Route::get('data_barang', [BarangController::class, 'index'])->name('data_barang.index');
+        Route::get('data_barang/{data_barang}', [BarangController::class, 'show'])
+            ->whereNumber('data_barang')
+            ->name('data_barang.show');
+        Route::get('data_ruangan', [RuanganController::class, 'index'])->name('data_ruangan.index');
+        Route::get('data_ruangan/{data_ruangan}', [RuanganController::class, 'show'])
+            ->whereNumber('data_ruangan')
+            ->name('data_ruangan.show');
+
+        // Admin-only write routes
+        Route::middleware(['admin'])->group(function () {
+            Route::get('data_barang/create', [BarangController::class, 'create'])->name('data_barang.create');
+            Route::post('data_barang', [BarangController::class, 'store'])->name('data_barang.store');
+            Route::get('data_barang/{data_barang}/edit', [BarangController::class, 'edit'])->name('data_barang.edit');
+            Route::put('data_barang/{data_barang}', [BarangController::class, 'update'])->name('data_barang.update');
+            Route::delete('data_barang/{data_barang}', [BarangController::class, 'destroy'])->name('data_barang.destroy');
+
+            Route::get('data_ruangan/create', [RuanganController::class, 'create'])->name('data_ruangan.create');
+            Route::post('data_ruangan', [RuanganController::class, 'store'])->name('data_ruangan.store');
+            Route::get('data_ruangan/{data_ruangan}/edit', [RuanganController::class, 'edit'])->name('data_ruangan.edit');
+            Route::put('data_ruangan/{data_ruangan}', [RuanganController::class, 'update'])->name('data_ruangan.update');
+            Route::delete('data_ruangan/{data_ruangan}', [RuanganController::class, 'destroy'])->name('data_ruangan.destroy');
+        });
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

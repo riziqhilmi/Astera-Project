@@ -74,6 +74,22 @@ class Barang extends Model
     }
 
     /**
+     * Scope untuk kategori jaringan
+     */
+    public function scopeKategoriJaringan($query)
+    {
+        $kategoriJaringan = [
+            'Router & Switch',
+            'Access Point', 
+            'Network Cable',
+            'Network Tool',
+            'Server'
+        ];
+        
+        return $query->whereIn('kategori', $kategoriJaringan);
+    }
+
+    /**
      * Accessor untuk status badge color
      */
     public function getStatusColorAttribute()
@@ -123,5 +139,21 @@ class Barang extends Model
             'perbaikan' => 'Perbaikan',
             default => 'Tidak Diketahui'
         };
+    }
+
+    /**
+     * Accessor untuk tipe kategori (jaringan/umum)
+     */
+    public function getTipeKategoriAttribute()
+    {
+        $kategoriJaringan = [
+            'Router & Switch',
+            'Access Point',
+            'Network Cable', 
+            'Network Tool',
+            'Server'
+        ];
+        
+        return in_array($this->kategori, $kategoriJaringan) ? 'jaringan' : 'umum';
     }
 }
