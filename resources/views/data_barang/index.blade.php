@@ -28,11 +28,22 @@
                 <select name="kategori" class="border rounded px-3 py-2 w-full">
                     <option value="semua">Semua Kategori</option>
                     <optgroup label="Jaringan Komputer">
-                        <option value="Router & Switch" {{ request('kategori') == 'Router & Switch' ? 'selected' : '' }}>Router & Switch</option>
+                        <option value="Router" {{ request('kategori') == 'Router' ? 'selected' : '' }}>Router</option>
                         <option value="Access Point" {{ request('kategori') == 'Access Point' ? 'selected' : '' }}>Access Point</option>
-                        <option value="Network Cable" {{ request('kategori') == 'Network Cable' ? 'selected' : '' }}>Network Cable</option>
-                        <option value="Network Tool" {{ request('kategori') == 'Network Tool' ? 'selected' : '' }}>Network Tool</option>
-                        <option value="Server" {{ request('kategori') == 'Server' ? 'selected' : '' }}>Server</option>
+                        <option value="UPS" {{ request('kategori') == 'Network Cable' ? 'selected' : '' }}>Network Cable</option>
+                        <option value="Proyektor" {{ request('kategori') == 'Network Tool' ? 'selected' : '' }}>Network Tool</option>
+                        <option value="Aplikasi" {{ request('kategori') == 'Aplikasi' ? 'selected' : '' }}>Aplikasi</option>
+                        <option value="Server Baremetal Non Virtual" {{ request('kategori') == 'Server Baremetal Non Virtual' ? 'selected' : '' }}>Server Baremetal Non Virtual</option>
+                        <option value="Server Fisik Host Virtualisasi" {{ request('kategori') == 'Server Fisik Host Virtualisasi' ? 'selected' : '' }}>Server Fisik Host Virtualisasi</option>
+                        <option value="Laptop Pc-LPTPC" {{ request('kategori') == 'Laptop Pc-LPTPC' ? 'selected' : '' }}>Laptop PC-LPTPC</option>
+                        <option value="jaringan-NTWRK" {{ request('kategori') == 'jaringan-NTWRK' ? 'selected' : '' }}>Jaringan-NTWRK</option>
+                        <option value="Switch" {{ request('kategori') == 'Switch' ? 'selected' : '' }}>Switch</option>
+                        <option value="server Storage" {{ request('kategori') == 'server Storage' ? 'selected' : '' }}>Server Storage</option>
+                        <option value="Lissence - LICNS" {{ request('kategori') == 'Lissence - LICNS' ? 'selected' : '' }}>Lissence - LICNS</option>
+                        <option value="Backup Aplliance" {{ request('kategori') == 'Backup Aplliance' ? 'selected' : '' }}>Backup Aplliance</option>
+                        <option value="WLAN Controller" {{ request('kategori') == 'WLAN Controller' ? 'selected' : '' }}>WLAN Controller</option>
+                        
+
                     </optgroup>
                     <optgroup label="Kategori Lainnya">
                         <option value="Elektronik" {{ request('kategori') == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
@@ -87,7 +98,7 @@
                     <th class="py-3 px-4 text-left">Nomor Seri</th>
                     <th class="py-3 px-4 text-left">Nama (Merk)</th>
                     <th class="py-3 px-4 text-left">Total</th>
-                    <th class="py-3 px-4 text-left">Ruangan</th>
+                    <th class="py-3 px-4 text-left">Rack</th>
                     <th class="py-3 px-4 text-left">Kategori</th>
                     <th class="py-3 px-4 text-left">Tgl Input</th>
                     <th class="py-3 px-4 text-left">Kondisi</th>

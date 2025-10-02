@@ -78,31 +78,40 @@
             </div>
 
             <!-- Kategori -->
-            <div class="space-y-1">
-                <label class="block text-sm font-medium text-gray-700">
-                    <span class="text-red-500">*</span> Kategori
-                </label>
-                <select name="kategori" id="kategori" 
-                        class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" 
-                        required onchange="updateNomorSeriPreview()">
-                    <option value="">Pilih Kategori</option>
-                    <optgroup label="Jaringan Komputer">
-                        <option value="Router & Switch" {{ old('kategori') == 'Router & Switch' ? 'selected' : '' }}>Router & Switch</option>
-                        <option value="Access Point" {{ old('kategori') == 'Access Point' ? 'selected' : '' }}>Access Point</option>
-                        <option value="Network Cable" {{ old('kategori') == 'Network Cable' ? 'selected' : '' }}>Network Cable</option>
-                        <option value="Network Tool" {{ old('kategori') == 'Network Tool' ? 'selected' : '' }}>Network Tool</option>
-                        <option value="Server" {{ old('kategori') == 'Server' ? 'selected' : '' }}>Server</option>
-                    </optgroup>
-                    <optgroup label="Kategori Lainnya">
-                        <option value="Elektronik" {{ old('kategori') == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
-                        <option value="Furniture" {{ old('kategori') == 'Furniture' ? 'selected' : '' }}>Furniture</option>
-                        <option value="ATK" {{ old('kategori') == 'ATK' ? 'selected' : '' }}>ATK (Alat Tulis Kantor)</option>
-                    </optgroup>
-                </select>
-                @error('kategori')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+<div class="space-y-1">
+    <label class="block text-sm font-medium text-gray-700">
+        <span class="text-red-500">*</span> Kategori
+    </label>
+    <select name="kategori" id="kategori" 
+            class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" 
+            required onchange="updateNomorSeriPreview()">
+        <option value="">Pilih Kategori</option>
+        <optgroup label="Jaringan Komputer">
+            <option value="Router" {{ old('kategori') == 'Router' ? 'selected' : '' }}>Router</option>
+            <option value="Access Point" {{ old('kategori') == 'Access Point' ? 'selected' : '' }}>Access Point</option>
+            <option value="UPS" {{ old('kategori') == 'UPS' ? 'selected' : '' }}>UPS</option>
+            <option value="Proyektor" {{ old('kategori') == 'Proyektor' ? 'selected' : '' }}>Proyektor</option>
+            <option value="Aplikasi" {{ old('kategori') == 'Aplikasi' ? 'selected' : '' }}>Aplikasi</option>
+            <option value="Server Baremetal Non Virtual" {{ old('kategori') == 'Server Baremetal Non Virtual' ? 'selected' : '' }}>Server Baremetal Non Virtual</option>
+            <option value="Server Fisik Host Virtualisasi" {{ old('kategori') == 'Server Fisik Host Virtualisasi' ? 'selected' : '' }}>Server Fisik Host Virtualisasi</option>
+            <option value="Laptop Pc-LPTPC" {{ old('kategori') == 'Laptop Pc-LPTPC' ? 'selected' : '' }}>Laptop PC-LPTPC</option>
+            <option value="jaringan-NTWRK" {{ old('kategori') == 'jaringan-NTWRK' ? 'selected' : '' }}>Jaringan-NTWRK</option>
+            <option value="Switch" {{ old('kategori') == 'Switch' ? 'selected' : '' }}>Switch</option>
+            <option value="server Storage" {{ old('kategori') == 'server Storage' ? 'selected' : '' }}>Server Storage</option>
+            <option value="Lissence - LICNS" {{ old('kategori') == 'Lissence - LICNS' ? 'selected' : '' }}>Lissence - LICNS</option>
+            <option value="Backup Aplliance" {{ old('kategori') == 'Backup Aplliance' ? 'selected' : '' }}>Backup Aplliance</option>
+            <option value="WLAN Controller" {{ old('kategori') == 'WLAN Controller' ? 'selected' : '' }}>WLAN Controller</option>
+        </optgroup>
+        <optgroup label="Kategori Lainnya">
+            <option value="Elektronik" {{ old('kategori') == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
+            <option value="Furniture" {{ old('kategori') == 'Furniture' ? 'selected' : '' }}>Furniture</option>
+            <option value="ATK" {{ old('kategori') == 'ATK' ? 'selected' : '' }}>ATK (Alat Tulis Kantor)</option>
+        </optgroup>
+    </select>
+    @error('kategori')
+        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+    @enderror
+</div>
             
             <!-- Kondisi -->
             <div class="space-y-1">
@@ -202,27 +211,45 @@
         });
 
         // Mapping kategori ke kode
-        const kodeMapping = {
-            // Jaringan Komputer
-            'Router & Switch': 'RTW',
-            'Access Point': 'ACP',
-            'Network Cable': 'CBL',
-            'Network Tool': 'NTL',
-            'Server': 'SVR',
-            // Kategori Lainnya
-            'Elektronik': 'ELT',
-            'Furniture': 'FTR',
-            'ATK': 'ATK'
-        };
+const kodeMapping = {
+    // Jaringan Komputer
+    'Router': 'RTR',
+    'Access Point': 'ACP',
+    'UPS': 'UPS',
+    'Proyektor': 'PRJ',
+    'Aplikasi': 'APP',
+    'Server Baremetal Non Virtual': 'SBNV',
+    'Server Fisik Host Virtualisasi': 'SFHV',
+    'Laptop Pc-LPTPC': 'LPC',
+    'jaringan-NTWRK': 'NTW',
+    'Switch': 'SWT',
+    'server Storage': 'STS',
+    'Lissence - LICNS': 'LIC',
+    'Backup Aplliance': 'BKA',
+    'WLAN Controller': 'WLC',
+    // Kategori Lainnya
+    'Elektronik': 'ELT',
+    'Furniture': 'FTR',
+    'ATK': 'ATK'
+};
 
-        // Kategori jaringan untuk menampilkan info tambahan
-        const kategoriJaringan = [
-            'Router & Switch',
-            'Access Point', 
-            'Network Cable',
-            'Network Tool',
-            'Server'
-        ];
+// Kategori jaringan untuk menampilkan info tambahan
+const kategoriJaringan = [
+    'Router',
+    'Access Point',
+    'UPS',
+    'Proyektor',
+    'Aplikasi',
+    'Server Baremetal Non Virtual',
+    'Server Fisik Host Virtualisasi',
+    'Laptop Pc-LPTPC',
+    'jaringan-NTWRK',
+    'Switch',
+    'server Storage',
+    'Lissence - LICNS',
+    'Backup Aplliance',
+    'WLAN Controller'
+];
 
         // Fungsi untuk menampilkan preview nomor seri
         function updateNomorSeriPreview() {

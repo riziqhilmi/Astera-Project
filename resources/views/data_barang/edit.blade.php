@@ -112,31 +112,40 @@
             </div>
 
             <!-- Kategori -->
-            <div class="space-y-1">
-                <label class="block text-sm font-medium text-gray-700">
-                    <span class="text-red-500">*</span> Kategori
-                </label>
-                <select name="kategori" id="kategori" 
-                        class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" 
-                        required onchange="updateKategoriStyle()">
-                    <option value="">Pilih Kategori</option>
-                    <optgroup label="Jaringan Komputer">
-                        <option value="Router & Switch" {{ old('kategori', $data_barang->kategori) == 'Router & Switch' ? 'selected' : '' }}>Router & Switch</option>
-                        <option value="Access Point" {{ old('kategori', $data_barang->kategori) == 'Access Point' ? 'selected' : '' }}>Access Point</option>
-                        <option value="Network Cable" {{ old('kategori', $data_barang->kategori) == 'Network Cable' ? 'selected' : '' }}>Network Cable</option>
-                        <option value="Network Tool" {{ old('kategori', $data_barang->kategori) == 'Network Tool' ? 'selected' : '' }}>Network Tool</option>
-                        <option value="Server" {{ old('kategori', $data_barang->kategori) == 'Server' ? 'selected' : '' }}>Server</option>
-                    </optgroup>
-                    <optgroup label="Kategori Lainnya">
-                        <option value="Elektronik" {{ old('kategori', $data_barang->kategori) == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
-                        <option value="Furniture" {{ old('kategori', $data_barang->kategori) == 'Furniture' ? 'selected' : '' }}>Furniture</option>
-                        <option value="ATK" {{ old('kategori', $data_barang->kategori) == 'ATK' ? 'selected' : '' }}>ATK (Alat Tulis Kantor)</option>
-                    </optgroup>
-                </select>
-                @error('kategori')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+<div class="space-y-1">
+    <label class="block text-sm font-medium text-gray-700">
+        <span class="text-red-500">*</span> Kategori
+    </label>
+    <select name="kategori" id="kategori" 
+            class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 text-sm py-2.5 px-4 shadow-sm" 
+            required onchange="updateKategoriStyle()">
+        <option value="">Pilih Kategori</option>
+        <optgroup label="Jaringan Komputer">
+            <option value="Router" {{ old('kategori', $data_barang->kategori) == 'Router' ? 'selected' : '' }}>Router</option>
+            <option value="Access Point" {{ old('kategori', $data_barang->kategori) == 'Access Point' ? 'selected' : '' }}>Access Point</option>
+            <option value="UPS" {{ old('kategori', $data_barang->kategori) == 'UPS' ? 'selected' : '' }}>UPS</option>
+            <option value="Proyektor" {{ old('kategori', $data_barang->kategori) == 'Proyektor' ? 'selected' : '' }}>Proyektor</option>
+            <option value="Aplikasi" {{ old('kategori', $data_barang->kategori) == 'Aplikasi' ? 'selected' : '' }}>Aplikasi</option>
+            <option value="Server Baremetal Non Virtual" {{ old('kategori', $data_barang->kategori) == 'Server Baremetal Non Virtual' ? 'selected' : '' }}>Server Baremetal Non Virtual</option>
+            <option value="Server Fisik Host Virtualisasi" {{ old('kategori', $data_barang->kategori) == 'Server Fisik Host Virtualisasi' ? 'selected' : '' }}>Server Fisik Host Virtualisasi</option>
+            <option value="Laptop Pc-LPTPC" {{ old('kategori', $data_barang->kategori) == 'Laptop Pc-LPTPC' ? 'selected' : '' }}>Laptop PC-LPTPC</option>
+            <option value="jaringan-NTWRK" {{ old('kategori', $data_barang->kategori) == 'jaringan-NTWRK' ? 'selected' : '' }}>Jaringan-NTWRK</option>
+            <option value="Switch" {{ old('kategori', $data_barang->kategori) == 'Switch' ? 'selected' : '' }}>Switch</option>
+            <option value="server Storage" {{ old('kategori', $data_barang->kategori) == 'server Storage' ? 'selected' : '' }}>Server Storage</option>
+            <option value="Lissence - LICNS" {{ old('kategori', $data_barang->kategori) == 'Lissence - LICNS' ? 'selected' : '' }}>Lissence - LICNS</option>
+            <option value="Backup Aplliance" {{ old('kategori', $data_barang->kategori) == 'Backup Aplliance' ? 'selected' : '' }}>Backup Aplliance</option>
+            <option value="WLAN Controller" {{ old('kategori', $data_barang->kategori) == 'WLAN Controller' ? 'selected' : '' }}>WLAN Controller</option>
+        </optgroup>
+        <optgroup label="Kategori Lainnya">
+            <option value="Elektronik" {{ old('kategori', $data_barang->kategori) == 'Elektronik' ? 'selected' : '' }}>Elektronik</option>
+            <option value="Furniture" {{ old('kategori', $data_barang->kategori) == 'Furniture' ? 'selected' : '' }}>Furniture</option>
+            <option value="ATK" {{ old('kategori', $data_barang->kategori) == 'ATK' ? 'selected' : '' }}>ATK (Alat Tulis Kantor)</option>
+        </optgroup>
+    </select>
+    @error('kategori')
+        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+    @enderror
+</div>
             
             <!-- Kondisi -->
             <div class="space-y-1">
@@ -186,42 +195,42 @@
         </div>
 
         <!-- Informasi Barang Saat Ini -->
-        <div class="mt-6 p-4 bg-gray-50 rounded-lg border">
-            <h4 class="font-medium text-gray-800 mb-2 flex items-center">
-                <i class="fas fa-info-circle text-blue-500 mr-2"></i> Informasi Barang Saat Ini
-            </h4>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <div>
-                    <span class="text-gray-600">Kategori:</span>
-                    <span class="font-medium ml-1 {{ in_array($data_barang->kategori, ['Router & Switch', 'Access Point', 'Network Cable', 'Network Tool', 'Server']) ? 'text-blue-600' : 'text-gray-800' }}">
-                        {{ $data_barang->kategori }}
-                    </span>
-                </div>
-                <div>
-                    <span class="text-gray-600">Nomor Seri:</span>
-                    <span class="font-medium ml-1 font-mono">{{ $data_barang->nomor_seri ?? '-' }}</span>
-                </div>
-                <div>
-                    <span class="text-gray-600">Ruangan:</span>
-                    <span class="font-medium ml-1">{{ $data_barang->ruangan->nama }}</span>
-                </div>
-                <div>
-                    <span class="text-gray-600">Terakhir Update:</span>
-                    <span class="font-medium ml-1">{{ $data_barang->updated_at->format('d/m/Y H:i') }}</span>
-                </div>
-            </div>
+<div class="mt-6 p-4 bg-gray-50 rounded-lg border">
+    <h4 class="font-medium text-gray-800 mb-2 flex items-center">
+        <i class="fas fa-info-circle text-blue-500 mr-2"></i> Informasi Barang Saat Ini
+    </h4>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div>
+            <span class="text-gray-600">Kategori:</span>
+            <span class="font-medium ml-1 {{ in_array($data_barang->kategori, ['Router', 'Access Point', 'UPS', 'Proyektor', 'Aplikasi', 'Server Baremetal Non Virtual', 'Server Fisik Host Virtualisasi', 'Laptop Pc-LPTPC', 'jaringan-NTWRK', 'Switch', 'server Storage', 'Lissence - LICNS', 'Backup Aplliance', 'WLAN Controller']) ? 'text-blue-600' : 'text-gray-800' }}">
+                {{ $data_barang->kategori }}
+            </span>
         </div>
+        <div>
+            <span class="text-gray-600">Nomor Seri:</span>
+            <span class="font-medium ml-1 font-mono">{{ $data_barang->nomor_seri ?? '-' }}</span>
+        </div>
+        <div>
+            <span class="text-gray-600">Ruangan:</span>
+            <span class="font-medium ml-1">{{ $data_barang->ruangan->nama }}</span>
+        </div>
+        <div>
+            <span class="text-gray-600">Terakhir Update:</span>
+            <span class="font-medium ml-1">{{ $data_barang->updated_at->format('d/m/Y H:i') }}</span>
+        </div>
+    </div>
+</div>
 
         <!-- Deskripsi Tambahan untuk Kategori Jaringan -->
-        <div id="deskripsi_jaringan" class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg 
-            {{ in_array($data_barang->kategori, ['Router & Switch', 'Access Point', 'Network Cable', 'Network Tool', 'Server']) ? '' : 'hidden' }}">
-            <h4 class="font-medium text-blue-800 mb-2 flex items-center">
-                <i class="fas fa-network-wired mr-2"></i> Informasi Jaringan Komputer
-            </h4>
-            <p class="text-sm text-blue-700">
-                Barang ini termasuk dalam kategori jaringan komputer. Pastikan informasi teknis tetap akurat.
-            </p>
-        </div>
+<div id="deskripsi_jaringan" class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg 
+    {{ in_array($data_barang->kategori, ['Router', 'Access Point', 'UPS', 'Proyektor', 'Aplikasi', 'Server Baremetal Non Virtual', 'Server Fisik Host Virtualisasi', 'Laptop Pc-LPTPC', 'jaringan-NTWRK', 'Switch', 'server Storage', 'Lissence - LICNS', 'Backup Aplliance', 'WLAN Controller']) ? '' : 'hidden' }}">
+    <h4 class="font-medium text-blue-800 mb-2 flex items-center">
+        <i class="fas fa-network-wired mr-2"></i> Informasi Jaringan Komputer
+    </h4>
+    <p class="text-sm text-blue-700">
+        Barang ini termasuk dalam kategori jaringan komputer. Pastikan informasi teknis tetap akurat.
+    </p>
+</div>
 
         <div class="flex justify-end space-x-3 mt-6 pt-4 border-t border-gray-100">
             <a href="{{ route('data_barang.index') }}" 
@@ -258,14 +267,22 @@
         });
 
         // Kategori jaringan untuk styling
-        const kategoriJaringan = [
-            'Router & Switch',
-            'Access Point', 
-            'Network Cable',
-            'Network Tool',
-            'Server'
-        ];
-
+const kategoriJaringan = [
+    'Router',
+    'Access Point',
+    'UPS',
+    'Proyektor',
+    'Aplikasi',
+    'Server Baremetal Non Virtual',
+    'Server Fisik Host Virtualisasi',
+    'Laptop Pc-LPTPC',
+    'jaringan-NTWRK',
+    'Switch',
+    'server Storage',
+    'Lissence - LICNS',
+    'Backup Aplliance',
+    'WLAN Controller'
+];
         // Fungsi untuk update styling kategori
         function updateKategoriStyle() {
             const kategoriSelect = document.getElementById('kategori');

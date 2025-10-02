@@ -77,26 +77,34 @@ Route::prefix('operasional')->middleware(['auth', 'admin_or_user_operasional'])-
     Route::post('/barang-masuk', [BarangMasukController::class, 'store'])->name('barang_masuk.store');
     Route::delete('/barang-masuk/{id}', [BarangMasukController::class, 'destroy'])->name('barang_masuk.destroy');
     
-    // Barang Keluar
+    // Pastikan routes untuk barang keluar seperti ini:
+Route::prefix('operasional')->group(function () {
     Route::get('/barang-keluar', [BarangKeluarController::class, 'index'])->name('barang_keluar.index');
     Route::post('/barang-keluar', [BarangKeluarController::class, 'store'])->name('barang_keluar.store');
     Route::delete('/barang-keluar/{id}', [BarangKeluarController::class, 'destroy'])->name('barang_keluar.destroy');
-    
-    // Pemeliharaan
-    Route::get('/pemeliharaan', [PemeliharaanController::class, 'index'])->name('pemeliharaan.index');
-    Route::get('/pemeliharaan/create', [PemeliharaanController::class, 'create'])->name('pemeliharaan.create');
-    Route::post('/pemeliharaan', [PemeliharaanController::class, 'store'])->name('pemeliharaan.store');
-    Route::get('/pemeliharaan/{pemeliharaan}/edit', [PemeliharaanController::class, 'edit'])->name('pemeliharaan.edit');
-    Route::put('/pemeliharaan/{pemeliharaan}', [PemeliharaanController::class, 'update'])->name('pemeliharaan.update');
-    Route::delete('/pemeliharaan/{pemeliharaan}', [PemeliharaanController::class, 'destroy'])->name('pemeliharaan.destroy');
-    
-    // Peminjaman
-    Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
-    Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])->name('peminjaman.create');
-    Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
-    Route::post('/peminjaman/{id}/kembali', [PeminjamanController::class, 'kembali'])->name('peminjaman.kembali');
-    Route::delete('/peminjaman/{peminjaman}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
+    Route::get('/barang-keluar/get-barang/{ruanganId}', [BarangKeluarController::class, 'getBarangByRuangan'])->name('barang_keluar.get_barang');
 });
+    // Pemeliharaan
+Route::get('/pemeliharaan', [PemeliharaanController::class, 'index'])->name('pemeliharaan.index');
+Route::get('/pemeliharaan/create', [PemeliharaanController::class, 'create'])->name('pemeliharaan.create');
+Route::post('/pemeliharaan', [PemeliharaanController::class, 'store'])->name('pemeliharaan.store');
+Route::get('/pemeliharaan/{pemeliharaan}/edit', [PemeliharaanController::class, 'edit'])->name('pemeliharaan.edit');
+Route::put('/pemeliharaan/{pemeliharaan}', [PemeliharaanController::class, 'update'])->name('pemeliharaan.update');
+Route::delete('/pemeliharaan/{pemeliharaan}', [PemeliharaanController::class, 'destroy'])->name('pemeliharaan.destroy');
+
+// Route untuk AJAX get barang by ruangan
+Route::get('/pemeliharaan/get-barang/{ruanganId}', [PemeliharaanController::class, 'getBarangByRuangan'])
+    ->name('pemeliharaan.get_barang');
+    // Peminjaman
+Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
+Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])->name('peminjaman.create');
+Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
+Route::post('/peminjaman/{id}/kembali', [PeminjamanController::class, 'kembali'])->name('peminjaman.kembali');
+Route::delete('/peminjaman/{peminjaman}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
+
+// Route untuk AJAX get barang by ruangan
+Route::get('/peminjaman/get-barang/{ruanganId}', [PeminjamanController::class, 'getBarangByRuangan'])
+    ->name('peminjaman.get_barang');});
 
 // ✅ Notification routes dengan prefix "/api"
 Route::middleware(['auth'])->prefix('api')->group(function () {
